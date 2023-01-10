@@ -24,7 +24,8 @@ class VITOOpenAPIClient:
         if self._token is None or self._token["expire_at"] < time.time():
             resp = self._sess.post(
                 API_BASE + "/v1/authenticate",
-                data={"client_id": self.client_id, "client_secret": self.client_secret},
+                data={"client_id": self.client_id,
+                      "client_secret": self.client_secret},
             )
             resp.raise_for_status()
             self._token = resp.json()
@@ -43,7 +44,8 @@ class VITOOpenAPIClient:
         STREAMING_ENDPOINT = "wss://{}/v1/transcribe:streaming?{}".format(
             API_BASE.split("://")[1], "&".join(map("=".join, config.items()))
         )
-        conn_kwargs = dict(extra_headers={"Authorization": "bearer " + self.token})
+        conn_kwargs = dict(
+            extra_headers={"Authorization": "bearer " + self.token})
 
         async def streamer(websocket):
             with open(filename, "rb") as f:
@@ -57,10 +59,12 @@ class VITOOpenAPIClient:
         async def transcriber(websocket):
             async for msg in websocket:
                 msg = json.loads(msg)
-                #print(msg)
+                # print(msg)
                 if msg["final"]:
-                    print(str(msg["seq"]) + " : " + msg["alternatives"][0]["text"])
-                    print("시작 시간 :" + str(msg["start_at"]) + ", 걸린 시간 : " + str(msg["duration"]))
+                    print(str(msg["seq"]) + " : " +
+                          msg["alternatives"][0]["text"])
+                    print("시작 시간 :" + str(msg["start_at"]) +
+                          ", 걸린 시간 : " + str(msg["duration"]))
 
         async with websockets.connect(STREAMING_ENDPOINT, **conn_kwargs) as websocket:
             await asyncio.gather(
@@ -71,9 +75,9 @@ class VITOOpenAPIClient:
 
 if __name__ == "__main__":
 
-    # 바꿔주세요~~
-    CLIENT_ID = "NFJOMvUAYfhQiZA8ZQit"
-    CLIENT_SECRET = "XJ2pgsDOaR8RilnUjvHKwaF9_WbXVjwcsfPMHx5L"
+    # 바꿔주세요~~ 네~
+    CLIENT_ID = "OILciM2Ejz-eWlN2E-pE"
+    CLIENT_SECRET = "qJIBUAPPhJApFpRXLGWJUiajeeaA1Y3hBdGx6pMc"
 
     client = VITOOpenAPIClient(CLIENT_ID, CLIENT_SECRET)
     fname = "test_voice.wav"
