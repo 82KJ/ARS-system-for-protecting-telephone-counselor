@@ -51,24 +51,38 @@ class VITOOpenAPIClient:
                     await websocket.send(buff)
                 await websocket.send("EOS")
 
-        arr = []
+        texts = []
         async def transcriber(websocket, model):
             async for msg in websocket:
                 msg = json.loads(msg)
                 #print(msg)
                 if msg["final"]:
+                    text = msg["alternatives"][0]["text"]
+                    idx = msg["seq"]
+
+                    print()
                     print(str(msg["seq"]) + " : " + msg["alternatives"][0]["text"])
                     print("시작 시간 :" + str(msg["start_at"]) + ", 걸린 시간 : " + str(msg["duration"]))
+                    texts.append([idx, text, (msg["start_at"], msg["start_at"]+msg["duration"]), -1])
+                    print(texts)
 
-                    await bert(model, msg["alternatives"][0]["text"])
+                    if "안녕" in text:
+                        texts[idx-1][3] = 1
+                        await bert(model, idx-1)
+                    else:
+                        # 음성 메타로 판단하기 위해서, 동기화 단계 진행
+                        pass
+                    
                     #arr.append(msg["alternatives"][0]["text"])
                     #print(model.encode(msg["alternatives"][0]["text"]))
                     #print(arr)
                     #print("final ended with " + msg["alternatives"][0]["text"] + "\n")
 
-        async def bert(model, msg):
-            embedd = model.encode(msg)
-            print(embedd[0])
+        async def bert(model, idx):
+            print("=====BERT 진입======")
+            print("["+texts[idx][1] + "]을 ai 분류기에 투입")
+            embedd = model.encode(texts[idx][1])
+            print("문장 임베딩 결과 : " + str(embedd[0]))
 
         async with websockets.connect(STREAMING_ENDPOINT, **conn_kwargs) as websocket:
             model = SentenceTransformer('all-mpnet-base-v2')
