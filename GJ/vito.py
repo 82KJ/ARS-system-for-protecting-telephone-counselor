@@ -57,7 +57,7 @@ class VITOOpenAPIClient:
         async def transcriber(websocket):
             async for msg in websocket:
                 msg = json.loads(msg)
-                #print(msg)
+                print(msg)
                 if msg["final"]:
                     print(str(msg["seq"]) + " : " + msg["alternatives"][0]["text"])
                     print("시작 시간 :" + str(msg["start_at"]) + ", 걸린 시간 : " + str(msg["duration"]))

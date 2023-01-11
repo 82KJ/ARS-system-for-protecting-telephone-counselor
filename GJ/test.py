@@ -90,7 +90,7 @@ class VITOOpenAPIClient:
                 streamer(websocket),
                 transcriber(websocket, model)
             )
-
+            
 
 if __name__ == "__main__":
     CLIENT_ID = "NFJOMvUAYfhQiZA8ZQit"
