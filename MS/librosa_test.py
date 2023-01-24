@@ -13,10 +13,8 @@ sr = librosa.get_samplerate(filename)
 stream = librosa.stream(filename, block_length=256,
                         frame_length=2048, hop_length=2048)
 
-# 3. Run the default beat tracker
-tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+for y_block in stream:
+    D_block = librosa.stft(y_block, center=False)
 
-print('Estimated tempo: {:.2f} beats per minute'.format(tempo))
-
-# 4. Convert the frame indices of beat events into timestamps
-beat_times = librosa.frames_to_time(beat_frames, sr=sr)
+# D_block 데시벨 정보가 나옴
+print(D_block)
