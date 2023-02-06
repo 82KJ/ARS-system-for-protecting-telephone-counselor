@@ -4,7 +4,12 @@ import logging
 import time
 from io import DEFAULT_BUFFER_SIZE
 
+# librosa
+import librosa
+
 import websockets
+# py -m pip
+
 from requests import Session
 
 API_BASE = "https://openapi.vito.ai"
