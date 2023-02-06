@@ -19,4 +19,5 @@ stream = librosa.stream(filename,
 for y_block in stream:
     D_block = librosa.stft(y_block, center=False)
 
+print(DEFAULT_BUFFER_SIZE)
 print(D_block)

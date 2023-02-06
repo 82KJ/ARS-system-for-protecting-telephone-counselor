@@ -3,6 +3,7 @@ import json
 import logging
 import time
 from io import DEFAULT_BUFFER_SIZE
+import decibel
 
 # librosa
 import librosa
@@ -87,3 +88,7 @@ if __name__ == "__main__":
     client = VITOOpenAPIClient(CLIENT_ID, CLIENT_SECRET)
     fname = "test_voice.wav"
     asyncio.run(client.streaming_transcribe(fname))
+
+    audio_path = "test_voice.wav"
+    aa = decibel.librosa_decibel(audio_path)
+    aa.get_decibel()
