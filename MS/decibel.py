@@ -3,12 +3,10 @@ import matplotlib.pyplot as plt
 import librosa
 import scipy.signal as signal
 import numpy as np
-from io import DEFAULT_BUFFER_SIZE
 
 
 class librosa_decibel:
     def __init__(self, audio_path):
-        super().__init__()
         self.audio_path = audio_path
         self.audio_sample, self.sampling_rate = librosa.load(
             audio_path, sr=None)
@@ -54,6 +52,7 @@ class librosa_decibel:
         print('dB_list >> ', dB_list)
         print('len(dB_list) >> ', len(dB_list))
 
+        # 데시벨 얼마 이상이 문제인지... 결정못함
         average = sum(dB_list) / len(dB_list)
         print("dB average >> ", average)
 

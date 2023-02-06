@@ -90,5 +90,5 @@ if __name__ == "__main__":
     asyncio.run(client.streaming_transcribe(fname))
 
     audio_path = "test_voice.wav"
-    aa = decibel.librosa_decibel(audio_path)
-    aa.get_decibel()
+    deci = decibel.librosa_decibel(audio_path)
+    deci.get_decibel()
