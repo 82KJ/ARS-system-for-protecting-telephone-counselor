@@ -14,6 +14,8 @@ import sys
 import librosa
 import numpy as np
 
+import test_model
+
 API_BASE = "https://openapi.vito.ai"
 
 class VITOOpenAPIClient:
@@ -24,10 +26,12 @@ class VITOOpenAPIClient:
         self.client_secret = client_secret
         self._sess = Session()
         self._token = None
-        self.model = SentenceTransformer('all-mpnet-base-v2')
+        #self.model = SentenceTransformer('all-mpnet-base-v2')
 
         self.amplitude = 0
         self.tempo = 0
+
+        self.model = test_model.KoBERT()
         
     @property
     def token(self):
@@ -69,9 +73,9 @@ class VITOOpenAPIClient:
 
                     print()
                     print(str(msg["seq"]) + " : " + msg["alternatives"][0]["text"])
-                    print("시작 시간 :" + str(msg["start_at"]) + ", 걸린 시간 : " + str(msg["duration"]))
+                    #print("시작 시간 :" + str(msg["start_at"]) + ", 걸린 시간 : " + str(msg["duration"]))
                     texts.append([idx, text, (msg["start_at"], msg["start_at"]+msg["duration"]), -1])
-                    print(texts)
+                    #print(texts)
 
                     speech_tempo = len(msg["alternatives"][0]["text"]) * 1000 / msg["duration"]
                     self.tempo = (self.tempo + speech_tempo) / msg["seq"]
@@ -79,10 +83,10 @@ class VITOOpenAPIClient:
                     speech_amplitude = await analyzer(msg)
                     self.amplitude = (self.amplitude * (msg["seq"]-1) + speech_amplitude) / msg["seq"]
 
-                    print("발화 속도 : ", speech_tempo)
-                    print("평균 발화 속도 : ", self.tempo)
-                    print("발화 크기: ", speech_amplitude)
-                    print("평균 발화 크기: ", self.amplitude)
+                    #print("발화 속도 : ", speech_tempo)
+                    #print("평균 발화 속도 : ", self.tempo)
+                    #print("발화 크기: ", speech_amplitude)
+                    #print("평균 발화 크기: ", self.amplitude)
 
                     if speech_tempo > (self.tempo * 1.5):
                         # 해당 텍스트의 발화 속도가 평균 발화속도 * 1.5 보다 빠르면 bert 모델 투입
@@ -96,6 +100,7 @@ class VITOOpenAPIClient:
                         await bert(model, idx-1)
                     else:
                         # 음성 메타로 판단하기 위해서, 동기화 단계 진행
+                        await bert(model, idx-1)
                         pass
                     
                     #arr.append(msg["alternatives"][0]["text"])
@@ -136,11 +141,12 @@ class VITOOpenAPIClient:
         async def bert(model, idx):
             print("=====BERT 진입======")
             print("["+texts[idx][1] + "]을 ai 분류기에 투입")
-            embedd = model.encode(texts[idx][1])
-            print("문장 임베딩 결과 : " + str(embedd[0]))
+            model.predict(texts[idx][1])
+            #embedd = model.encode(texts[idx][1])
+            #print("문장 임베딩 결과 : " + str(embedd[0]))
 
         async with websockets.connect(STREAMING_ENDPOINT, **conn_kwargs) as websocket:
-            model = SentenceTransformer('all-mpnet-base-v2')
+            model = self.model
             await asyncio.gather(
                 streamer(websocket),
                 transcriber(websocket, model)
@@ -148,15 +154,12 @@ class VITOOpenAPIClient:
             )
 
 
-       
-            
-            
 if __name__ == "__main__":
     CLIENT_ID = "NpLwRFyBfxWGUPd3OsZ7"
     CLIENT_SECRET = "SSmusUj2y_CaxXU0F3QaWszLaHH9fCUB5triQRbY"
     
     client = VITOOpenAPIClient(CLIENT_ID, CLIENT_SECRET)
-    fname = "test_voice.wav"
+    fname = "abuse4.wav"
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(client.streaming_transcribe(fname))
