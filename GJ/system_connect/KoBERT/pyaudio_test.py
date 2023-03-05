@@ -163,7 +163,7 @@ if __name__ == "__main__":
     client = VITOOpenAPIClient(CLIENT_ID, CLIENT_SECRET)
 
     p = pyaudio.PyAudio()
-    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=4096)
+    stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=1024)
     audio_generator = iter(lambda: stream.read(DEFAULT_BUFFER_SIZE), b"")
     asyncio.run(client.streaming_transcribe(audio_generator))
     stream.stop_stream()
