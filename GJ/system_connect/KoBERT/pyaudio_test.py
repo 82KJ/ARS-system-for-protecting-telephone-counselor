@@ -112,12 +112,12 @@ class VITOOpenAPIClient:
                     self.tempo = (self.tempo + speech_tempo) / cnt
 
                     speech_amplitude = analyzer(msg)
-                    self.amplitude = (self.amplitude * (cnt-1) + speech_amplitude) / cnt
+                    # self.amplitude = (self.amplitude * (cnt-1) + speech_amplitude) / cnt
 
-                    print("발화 속도 : ", speech_tempo)
-                    print("평균 발화 속도 : ", self.tempo)
-                    print("발화 크기: ", speech_amplitude)
-                    print("평균 발화 크기: ", self.amplitude)
+                    # print("발화 속도 : ", speech_tempo)
+                    # print("평균 발화 속도 : ", self.tempo)
+                    # print("발화 크기: ", speech_amplitude)
+                    # print("평균 발화 크기: ", self.amplitude)
 
                     # 문장 형태소 분리
                     morphs = self.kiwi.tokenize(text)
@@ -132,11 +132,19 @@ class VITOOpenAPIClient:
 
         def analyzer(msg):
             edited_data = split_wav(44100, msg["start_at"], msg["start_at"]+msg["duration"])
-            stft = librosa.stft(edited_data, n_fft = 1600, hop_length = 400)
-            spectrogram = np.abs(stft)
-            log_spectrogram = librosa.amplitude_to_db(spectrogram)
+            # Compute mel spectrogram
+            S = librosa.feature.melspectrogram(y=edited_data, sr=44100, n_fft=1600, hop_length=400, n_mels=128)
+            # Get mel coefficients at start and end times
+            start_time_mel = S[:, 0]
+            end_time_mel = S[:, -1]
+            print((end_time_mel.mean() - start_time_mel.mean())/msg["duration"])
+            
+            #print((end_time_mel - start_time_mel) / msg["duration"])
+            # stft = librosa.stft(edited_data, n_fft = 1600, hop_length = 400)
+            # spectrogram = np.abs(stft)
+            # log_spectrogram = librosa.amplitude_to_db(spectrogram)
     
-            return log_spectrogram.mean(axis=0).mean(axis=0)
+            # return log_spectrogram.mean(axis=0).mean(axis=0)
 
         def split_wav(sample_rate, start, end):
             start *= sample_rate
@@ -164,7 +172,7 @@ if __name__ == "__main__":
 
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=1024)
-    audio_generator = iter(lambda: stream.read(DEFAULT_BUFFER_SIZE), b"")
+    audio_generator = iter(lambda: stream.read(1024), b"")
     asyncio.run(client.streaming_transcribe(audio_generator))
     stream.stop_stream()
     stream.close()
