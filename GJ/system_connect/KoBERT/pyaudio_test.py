@@ -82,7 +82,7 @@ class VITOOpenAPIClient:
 
         async def streamer(websocket):
             for data in audio_generator:
-                
+                print(len(data))             
                 # 1. 진폭 저장하기
                 await make_amplitude_list(data)
 
