@@ -13,6 +13,7 @@ import librosa
 import numpy as np
 import keyboard
 
+
 from kiwipiepy import Kiwi
 import make_dict
 
@@ -132,14 +133,19 @@ class VITOOpenAPIClient:
 
         def analyzer(msg):
             edited_data = split_wav(44100, msg["start_at"], msg["start_at"]+msg["duration"])
-            # Compute mel spectrogram
-            S = librosa.feature.melspectrogram(y=edited_data, sr=44100, n_fft=1600, hop_length=400, n_mels=128)
-            # Get mel coefficients at start and end times
-            start_time_mel = S[:, 0]
-            end_time_mel = S[:, -1]
-            # print((end_time_mel.mean() - start_time_mel.mean())/msg["duration"])
+            S = librosa.feature.melspectrogram(y=edited_data, sr=44100, n_fft=512, hop_length=400, n_mels=128)
+            # n_fft : frame length를 결정, 뮤직은 2048, 음성은 512
+            S_DB = librosa.amplitude_to_db(S, ref = np.max)
+            print (S_DB.mean(axis = 0). mean(axis = 0))
+
+            # # Compute mel spectrogram
+            # 
+            # # Get mel coefficients at start and end times
+            # start_time_mel = S[:, 0]
+            # end_time_mel = S[:, -1]
+            # # print((end_time_mel.mean() - start_time_mel.mean())/msg["duration"])
             
-            #print((end_time_mel - start_time_mel) / msg["duration"])
+            # print((end_time_mel - start_time_mel) / msg["duration"])
             # stft = librosa.stft(edited_data, n_fft = 1600, hop_length = 400)
             # spectrogram = np.abs(stft)
             # log_spectrogram = librosa.amplitude_to_db(spectrogram)
