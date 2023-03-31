@@ -63,7 +63,7 @@ class BERTClassifier(nn.Module):
 
 class KoBERT:
     def __init__(self):
-        print("init 시작")
+        print("모델 init 시작")
         self.device = 'cpu'
         self.max_len = 64
         self.batch_size = 64
@@ -71,12 +71,10 @@ class KoBERT:
         self.tokenizer = get_tokenizer() 
         self.tok = nlp.data.BERTSPTokenizer(self.tokenizer, self.vocab, lower=False)
 
-        self.model = BERTClassifier(self.bertmodel, dr_rate=0.3).to(self.device)
-        # 임시경로
-        dirs = 'C:\\Users\\penpenguin2018\\ARS-system-for-protecting-telephone-counselor\\MS\\KoBERT_ss\\'
-        self.model_state_dict = torch.load( dirs + "kobert_classifier.pth", map_location=self.device)
+        self.model = BERTClassifier(self.bertmodel, dr_rate=0.5).to(self.device)
+        self.model_state_dict = torch.load("C:\\Users\\penpenguin2018\\ARS-system-for-protecting-telephone-counselor\\MS\\study\\main\\kobert_classifier.pth", map_location=self.device)
         self.model.load_state_dict(self.model_state_dict)
-        print("init 완료")
+        print("모델 init 완료")
 
 
     def predict(self, predict_sentence):
@@ -108,8 +106,11 @@ class KoBERT:
             if np.argmax(logits) == 0:
                 test_eval= "일반"
             elif np.argmax(logits) == 1:
-                test_eval = "욕설 및 폭언"
+                test_eval = "폭언"
             elif np.argmax(logits) == 2:
                 test_eval = "성희롱"
+            
+            return test_eval
 
-            print(">> " + test_eval + " 문장입니다.")
+
+            #print(">> " + test_eval + " 문장입니다.")

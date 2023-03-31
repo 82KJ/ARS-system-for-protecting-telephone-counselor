@@ -171,8 +171,8 @@ class VITOOpenAPIClient:
             )
 
 if __name__ == "__main__":
-    CLIENT_ID = "NFJOMvUAYfhQiZA8ZQit"
-    CLIENT_SECRET = "XJ2pgsDOaR8RilnUjvHKwaF9_WbXVjwcsfPMHx5L"
+    CLIENT_ID = "OILciM2Ejz-eWlN2E-pE"
+    CLIENT_SECRET = "qJIBUAPPhJApFpRXLGWJUiajeeaA1Y3hBdGx6pMc"
 
     client = VITOOpenAPIClient(CLIENT_ID, CLIENT_SECRET)
 
