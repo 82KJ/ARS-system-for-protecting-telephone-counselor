@@ -13,7 +13,7 @@ API_BASE = "https://openapi.vito.ai"
 
 
 config = dict(
-    sample_rate="48000",
+    sample_rate="44100",
     encoding="LINEAR16",
     use_itn="true",
     use_disfluency_filter="false",
@@ -24,7 +24,7 @@ STREAMING_ENDPOINT = "wss://{}/v1/transcribe:streaming?{}".format(
     API_BASE.split("://")[1], "&".join(map("=".join, config.items()))
 )
 
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODAyNzcyMzEsImlhdCI6MTY4MDI1NTYzMSwianRpIjoiT2hIQzhLdnl0ZndyMTR0Wlh4UmQiLCJwbGFuIjoiYmFzaWMiLCJzY29wZSI6InNwZWVjaCIsInN1YiI6Ik5GSk9NdlVBWWZoUWlaQThaUWl0In0.EiBD6ClVrEIkVYzcQY7jqRMXWwWE4yZ0qNL3QRj7F_0"
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODA0NTQ5MDgsImlhdCI6MTY4MDQzMzMwOCwianRpIjoiQUQwLTQtaGFDM20zNlYyYXQ4MkIiLCJwbGFuIjoiYmFzaWMiLCJzY29wZSI6InNwZWVjaCIsInN1YiI6Ik5GSk9NdlVBWWZoUWlaQThaUWl0In0.f-L-9eGXGkW2iJNACCZj2LJJbQdri4PsdtMPUjYX7l4"
 
 conn_kwargs = dict(extra_headers={"Authorization": "bearer " + token})
 

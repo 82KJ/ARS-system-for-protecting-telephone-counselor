@@ -73,7 +73,7 @@ class KoBERT:
 
         self.model = BERTClassifier(self.bertmodel, dr_rate=0.3).to(self.device)
         # 임시경로
-        dirs = 'C:\\Users\\penpenguin2018\\ARS-system-for-protecting-telephone-counselor\\MS\\KoBERT_ss\\'
+        dirs = 'C:\\Users\\penpe\\sw\\ARS-system-for-protecting-telephone-counselor\\MS\\KoBERT_ss\\'
         self.model_state_dict = torch.load( dirs + "kobert_classifier.pth", map_location=self.device)
         self.model.load_state_dict(self.model_state_dict)
         print("init 완료")
