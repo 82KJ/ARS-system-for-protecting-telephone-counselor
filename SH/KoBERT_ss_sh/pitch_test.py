@@ -13,7 +13,6 @@ import librosa
 import numpy as np
 import keyboard
 
-
 from kiwipiepy import Kiwi
 import make_dict
 
@@ -83,7 +82,7 @@ class VITOOpenAPIClient:
 
         async def streamer(websocket):
             for data in audio_generator:
-                # print(len(data))             
+                
                 # 1. 진폭 저장하기
                 await make_amplitude_list(data)
 
@@ -112,13 +111,14 @@ class VITOOpenAPIClient:
                     speech_tempo = len(msg["alternatives"][0]["text"]) * 1000 / msg["duration"]
                     self.tempo = (self.tempo + speech_tempo) / cnt
 
-                    speech_amplitude = analyzer(msg)
-                    # self.amplitude = (self.amplitude * (cnt-1) + speech_amplitude) / cnt
+                    speech_amplitude, pitch = analyzer(msg)
+                    self.amplitude = (self.amplitude * (cnt-1) + speech_amplitude) / cnt
 
-                    # print("발화 속도 : ", speech_tempo)
-                    # print("평균 발화 속도 : ", self.tempo)
-                    # print("발화 크기: ", speech_amplitude)
-                    # print("평균 발화 크기: ", self.amplitude)
+                    print("발화 속도 : ", speech_tempo)
+                    print("평균 발화 속도 : ", self.tempo)
+                    print("발화 크기: ", speech_amplitude)
+                    print("평균 발화 크기: ", self.amplitude)
+                    print("피치 기울기: ", pitch)
 
                     # 문장 형태소 분리
                     morphs = self.kiwi.tokenize(text)
@@ -131,24 +131,36 @@ class VITOOpenAPIClient:
                     if match_flag == True:     
                         bert(idx)
 
+#        def analyzer(msg):
+#            edited_data = split_wav(44100, msg["start_at"], msg["start_at"]+msg["duration"])
+#            stft = librosa.stft(edited_data, n_fft = 1600, hop_length = 400)
+#            spectrogram = np.abs(stft)
+#            log_spectrogram = librosa.amplitude_to_db(spectrogram)
+#    
+#            return log_spectrogram.mean(axis=0).mean(axis=0)
+        
         def analyzer(msg):
             edited_data = split_wav(44100, msg["start_at"], msg["start_at"]+msg["duration"])
-            S = librosa.feature.melspectrogram(y=edited_data, sr=44100, n_fft=512, hop_length=400, n_mels=128)
-            # n_fft : frame length를 결정, 뮤직은 2048, 음성은 512
-            start_time_mel = S[:, 0]
-            strt_mel = librosa.amplitude_to_db(start_time_mel,ref = np.max)
-            end_time_mel = S[:, -1]
-            end_mel = librosa.amplitude_to_db(end_time_mel,ref = np.max)
-            result = ((end_mel.mean() - strt_mel())/msg["duration"])
 
-            print(result.mean(axis = 0).mean(axis =))
-     
+            #compute mel spectogram
+            S = librosa.feature.melspectogram(y = edited_data, sr = 44100, n_fft = 512, hop_length = 400, n_mels = 128, fmax = 8000)
 
-            # stft = librosa.stft(edited_data, n_fft = 1600, hop_length = 400)
-            # spectrogram = np.abs(stft)
-            # log_spectrogram = librosa.amplitude_to_db(spectrogram)
-    
-            # return log_spectrogram.mean(axis=0).mean(axis=0)
+            #convert power spectogram to db
+            S_db = librosa.power_to_db(S, ref = np.max)
+
+            #compute pitch using YIN algorithm on the mel spectogram
+            f0, voiced_flag, _ = librosa.pyin(librosa.db_to_power(S_db), fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'), sr=44100)
+
+            #compute the time array
+            times = librosa.times_like(f0)
+
+            #compute pitch slope using inear regression
+            pitch_slope, _ = np.polyfit(times, librosa.core.hz_to_mel(f0),1)
+
+            print("pitch slope in mel scale:", pitch_slope)
+
+
+            return pitch_slope
 
         def split_wav(sample_rate, start, end):
             start *= sample_rate
@@ -169,14 +181,14 @@ class VITOOpenAPIClient:
             )
 
 if __name__ == "__main__":
-    CLIENT_ID = "NFJOMvUAYfhQiZA8ZQit"
-    CLIENT_SECRET = "XJ2pgsDOaR8RilnUjvHKwaF9_WbXVjwcsfPMHx5L"
+    CLIENT_ID = "NpLwRFyBfxWGUPd3OsZ7"
+    CLIENT_SECRET = "SSmusUj2y_CaxXU0F3QaWszLaHH9fCUB5triQRbY"
 
     client = VITOOpenAPIClient(CLIENT_ID, CLIENT_SECRET)
 
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=1024)
-    audio_generator = iter(lambda: stream.read(1024), b"")
+    audio_generator = iter(lambda: stream.read(DEFAULT_BUFFER_SIZE), b"")
     asyncio.run(client.streaming_transcribe(audio_generator))
     stream.stop_stream()
     stream.close()
