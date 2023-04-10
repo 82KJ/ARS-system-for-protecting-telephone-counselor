@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Microphone Recorder</title>
+  </head>
+  <body>
+    <button id="recordButton">Record</button>
+    <button id="stopButton" disabled>Stop</button>
+    <div id="log"></div>
+
+    <script>
+
+      websocket = new WebSocket('ws://localhost:8000/ws/');
+
+      var audioContext = new AudioContext();
+      console.log(audioContext.sampleRate);
+
+      var log = document.getElementById("log");
+
+      var handleSuccess = function(stream) {
+        var context = new AudioContext();
+        var source = context.createMediaStreamSource(stream);
+        var processor = context.createScriptProcessor(1024, 1, 1);
+
+        source.connect(processor);
+        processor.connect(context.destination);
+
+        var buffer = [];
+        var recording = false;
+
+        document.getElementById("recordButton").addEventListener("click", function() {
+          recording = true;
+          document.getElementById("recordButton").disabled = true;
+          document.getElementById("stopButton").disabled = false;
+        });
+
+        document.getElementById("stopButton").addEventListener("click", function() {
+          recording = false;
+          document.getElementById("recordButton").disabled = false;
+          document.getElementById("stopButton").disabled = true;
+          websocket.close()
+        });
+
+        processor.onaudioprocess = function(e) {
+          if (!recording) return;
+
+          // const inputBuffer = e.inputBuffer.getChannelData(0);
+          // const outputBuffer = new Int16Array(inputBuffer.length);
+          // for (let i = 0; i < inputBuffer.length; i++) {
+          //   outputBuffer[i] = inputBuffer[i] * 32767;
+          // }
+          // websocket.send(outputBuffer)
+          // console.log(outputBuffer)
+
+          buffer.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+          
+          
+          
+          //buffer.push(new Int32Array(e.inputBuffer.getChannelData(0)));
+          //console.log(e.inputBuffer.getChannelData(0));
+          //console.log(buffer)
+        };
+
+        websocket.onmessage = function(event){
+          console.log(event.data)
+          const msg = JSON.parse(event.data);
+          console.log(msg)
+
+          if (msg['final'] == "true"){
+            log.innerHTML = msg['text'] + ", 결과 :  " + msg['res'];
+          }
+          else{
+            log.innerHTML = msg['text'];
+          }
+
+        }
+      
+        setInterval(function() {
+          if (buffer.length === 0) return;
+          var data = buffer.splice(0, buffer.length);
+          //console.log(data)
+          var outputBuffer = new Int16Array(data.length * data[0].length);
+          for (let i = 0, index = 0; i < data.length; i++) {
+            for (let k = 0; k < data[i].length; k++, index++){
+              outputBuffer[index] = data[i][k] * 32767;
+            }
+          }
+          websocket.send(outputBuffer)
+          //console.log(outputBuffer)
+
+          // console.log(data) 
+          // websocket.send(data)
+
+          // log.innerHTML += data.map(function(channelData) {
+          //   var len = channelData.length;
+          //   var arr = new Int16Array(len);
+          //   while (len--) arr[len] = Math.min(1, channelData[len]) * 0x7FFF;
+          //   return arr;
+          // }).join("");
+        }, 1000);
+      };
+
+      navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+          .then(handleSuccess);
+    </script>
+  </body>
+</html>
