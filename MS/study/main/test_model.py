@@ -72,7 +72,7 @@ class KoBERT:
         self.tok = nlp.data.BERTSPTokenizer(self.tokenizer, self.vocab, lower=False)
 
         self.model = BERTClassifier(self.bertmodel, dr_rate=0.5).to(self.device)
-        self.model_state_dict = torch.load("C:\\Users\\penpenguin2018\\ARS-system-for-protecting-telephone-counselor\\MS\\study\\main\\kobert_classifier.pth", map_location=self.device)
+        self.model_state_dict = torch.load("C:\\Users\\penpe\\sw\\ARS-system-for-protecting-telephone-counselor\\MS\\study\\main\\kobert_classifier.pth", map_location=self.device)
         self.model.load_state_dict(self.model_state_dict)
         print("모델 init 완료")
 
