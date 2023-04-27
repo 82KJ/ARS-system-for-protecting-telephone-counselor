@@ -1,0 +1,35 @@
+.chat-message > div {
+    background-color : #3b3b3b;
+    color : #e1e1e1;
+    border-radius : 0.8em;
+    padding : 0.4em;
+    margin : 0.4em 0;
+    display : inline-block;
+    max-width : 80%;
+    word-wrap : break-word;
+}
+
+.chat-message > .abuse-sentence {
+    background-color : red;
+}
+
+.chat-message > .sexual-sentence {
+    background-color : blue;
+}
+
+#recordButton{
+    background-color:red;
+    border: none;
+    border-radius: 0.5em;
+}
+
+#stopButton{
+    color:white;
+    background-color:black;
+    border: none;
+    border-radius: 0.5em;
+}
+
+#chat_messages{
+    height:90%;
+}

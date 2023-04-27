@@ -1,0 +1,17 @@
+<nav class="navbar">
+    <ul class="navbar_menu">
+        <li class="nav_item {% if request.path == '/' %}active{% endif %}"">
+            <a class="nav_link" href="/">Home</a>
+        </li>
+        <li class="nav_item {% if request.path == '/chatroom' %}active{% endif %}"">
+            <a class="nav_link" href="/chatroom">ChatRoom</a>
+        </li>
+        <li class="nav_item {% if request.path == '/result' %}active{% endif %}"">
+            <a class="nav_link" href="/result">Result</a>
+        </li>
+    </ul>
+
+    <ul class="navbar_icons">
+        <li>Telmet</li>
+    </ul>
+</nav>

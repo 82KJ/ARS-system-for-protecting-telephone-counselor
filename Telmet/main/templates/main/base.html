@@ -1,0 +1,40 @@
+{% load django_bootstrap5 %}
+{% load static %}
+
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>Attention</title>
+    <link rel="stylesheet" href="static/css/navbar.css">
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% block extra-style %}{% endblock %}
+</head>
+
+<body>
+    {% bootstrap_messages %}
+
+    <div class="container my-5">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card" style="height: 600px;">
+                    <div class="card-header">
+                        {% include 'main/navbar.html' %}
+                    </div>
+                    <div class="card-body overflow-hidden">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% block extra-script %}{% endblock %}
+
+</body>
+
+</html>
+

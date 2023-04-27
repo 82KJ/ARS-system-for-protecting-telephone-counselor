@@ -1,0 +1,130 @@
+{% extends "main/base.html" %}
+
+{% block extra-style %}
+<link rel="stylesheet" href="static/css/chatroom.css">
+{% endblock %}
+
+
+{% block content %}
+<div id="chat_messages" class="w-100 border-0 overflow-scroll"></div>
+
+<button id="recordButton">Record</button>
+<button id="stopButton" disabled>Stop</button>
+
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    websocket = new WebSocket('ws://localhost:8000/ws/');
+
+    var audioContext = new AudioContext();
+    console.log(audioContext.sampleRate);
+
+    var log = document.getElementById("log");
+
+    var handleSuccess = function(stream) {
+        var context = new AudioContext();
+        var source = context.createMediaStreamSource(stream);
+        var processor = context.createScriptProcessor(1024, 1, 1);
+        var chat_message_tag = document.querySelector("#chat_messages");
+        var flag = false;
+        var first = true;
+  
+        source.connect(processor);
+        processor.connect(context.destination);
+
+        var buffer = [];
+        var recording = false;
+
+        document.getElementById("recordButton").addEventListener("click", function() {
+            recording = true;
+            document.getElementById("recordButton").disabled = true;
+            document.getElementById("stopButton").disabled = false;
+        });
+
+        document.getElementById("stopButton").addEventListener("click", function() {
+            recording = false;
+            document.getElementById("recordButton").disabled = false;
+            document.getElementById("stopButton").disabled = true;
+            websocket.close()
+        });
+
+        processor.onaudioprocess = function(e) {
+            if (!recording) return;
+            buffer.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+            
+        };
+
+        websocket.onmessage = function(event){
+            const msg = JSON.parse(event.data);
+            console.log(msg)
+
+            if (flag == false && first == true){
+                first = false;
+                const element = document.createElement("div");
+                element.className = "chat-message";
+
+                const wrapper = document.createElement("div");
+                wrapper.textContent = msg['text'];
+
+                element.appendChild(wrapper);
+
+                chat_message_tag.appendChild(element);
+                chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+
+                var cName = "normal-sentence";
+                res = msg['res'];
+                console.log(res);
+                if (res == "폭언") {cName = "abuse-sentence";}
+                if (res == "성희롱") {cName = "sexual-sentence";}
+                chat_message_tag.lastChild.lastChild.className = cName;
+            }
+            else if (flag == false){
+                chat_message_tag.lastChild.lastChild.innerHTML = msg['text'];
+                var cName = "normal-sentence";
+                res = msg['res'];
+                console.log(res);
+                if (res == "폭언") {cName = "abuse-sentence";}
+                if (res == "성희롱") {cName = "sexual-sentence";}
+                chat_message_tag.lastChild.lastChild.className = cName;
+
+                chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+
+            }
+            else{
+                flag = false;
+                const element = document.createElement("div");
+                element.className = "chat-message";
+
+                const wrapper = document.createElement("div");
+                wrapper.textContent = msg['text'];
+                element.appendChild(wrapper);
+
+                chat_message_tag.appendChild(element);
+                chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+            }
+            flag = (msg['final'] === "true");
+        }
+
+        setInterval(function() {
+            if (buffer.length === 0) return;
+            var data = buffer.splice(0, buffer.length);
+            var outputBuffer = new Int16Array(data.length * data[0].length);
+            for (let i = 0, index = 0; i < data.length; i++) {
+            for (let k = 0; k < data[i].length; k++, index++){
+                outputBuffer[index] = data[i][k] * 32767;
+            }
+            }
+            websocket.send(outputBuffer)
+        }, 1000);
+    };
+
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then(handleSuccess);
+
+</script>
+
+
+{% endblock %}
+
+
