@@ -34,3 +34,16 @@ class CounselorDictionary(models.Model):
         verbose_name = 'Counselor Dictionary'
         verbose_name_plural = 'Counselor Dictionary' 
 
+class ConversationLog(models.Model):
+    log_id = models.IntegerField(primary_key=True)
+    content = models.TextField(blank=True)
+    time = models.DateTimeField(auto_now_add=True)
+    result = models.IntegerField(blank=True) #공백허용
+
+    def __str__(self):
+        return self.content
+    
+    class Meta:
+        verbose_name = 'Conversation Log'
+        verbose_name_plural = 'Conversation Log'
+    
