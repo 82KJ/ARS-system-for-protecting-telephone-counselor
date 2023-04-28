@@ -6,6 +6,8 @@ import numpy as np
 
 from kobert.utils import get_tokenizer
 from kobert.pytorch_kobert import get_pytorch_kobert_model
+from pathlib import Path
+import os
 
 class BERTDataset(Dataset):
     def __init__(self, dataset, sent_idx, label_idx, bert_tokenizer, max_len, pad, pair):
@@ -72,8 +74,10 @@ class KoBERT:
         self.tok = nlp.data.BERTSPTokenizer(self.tokenizer, self.vocab, lower=False)
 
         self.model = BERTClassifier(self.bertmodel, dr_rate=0.5).to(self.device)
-        
-        self.model_state_dict = torch.load("C:\\attention\code\Telmet\main\kobert_classifier.pth", map_location=self.device)
+        self.base_url = Path(__file__).resolve().parent
+        self.model_url = os.path.join(self.base_url, 'kobert_classifier.pth')
+        #print(self.model_url)
+        self.model_state_dict = torch.load(self.model_url, map_location=self.device)
         self.model.load_state_dict(self.model_state_dict)
         print("모델 init 완료")
 
