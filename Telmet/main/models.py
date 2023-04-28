@@ -35,10 +35,10 @@ class CounselorDictionary(models.Model):
         verbose_name_plural = 'Counselor Dictionary' 
 
 class ConversationLog(models.Model):
-    log_id = models.IntegerField(primary_key=True)
-    content = models.TextField(blank=True)
+    log_id = models.AutoField(primary_key=True)
+    content = models.TextField(blank=True, null=True)
     time = models.DateTimeField(auto_now_add=True)
-    result = models.IntegerField(blank=True) #공백허용
+    result = models.IntegerField(blank=True, null=True) #공백허용
 
     def __str__(self):
         return self.content

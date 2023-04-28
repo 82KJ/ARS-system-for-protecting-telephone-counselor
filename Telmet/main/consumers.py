@@ -12,6 +12,11 @@ import environ
 import os
 from pathlib import Path
 import requests
+from asgiref.sync import async_to_sync 
+from channels.db import database_sync_to_async
+
+# DB table Load
+from .models import ConversationLog, AbuseDictionary
 
 API_BASE = "https://openapi.vito.ai"
 
@@ -53,6 +58,9 @@ class AudioConsumer(AsyncWebsocketConsumer):
             return token
 
     async def connect(self):
+
+        await self.drop_table()
+
         global token        
         token = self.get_token(token)
         conn_kwargs = dict(extra_headers={"Authorization": "bearer " + token})
@@ -84,10 +92,16 @@ class AudioConsumer(AsyncWebsocketConsumer):
             text = msg["alternatives"][0]["text"]
 
             if msg["final"]:
-                #print(msg)
+
+                # 1. Text DB에 저장하고, 저장 결과 확인하는 부분
+                await self.insert_record(text)
+                x = await self.select_text()
+                print(x.log_id, x.content, x.time)
+                print()
+                ##############################################
+
                 start_voice_meta = time.time()
                 start, end = self.split_wav(msg["start_at"], msg["start_at"]+msg["duration"])
-                #print(start_idx, end_idx)
                 start_pitch, end_pitch = await self.analyzer(start,end)
                 print((start_pitch - end_pitch) / (msg["duration"] / 1000))
                 end_voice_meta = time.time()
@@ -107,6 +121,11 @@ class AudioConsumer(AsyncWebsocketConsumer):
                 print(res)
                 print(f"bert 산출 시간 : {end_bert - start_bert:.5f} sec")
 
+
+                # 2. 산출된 탐지 결과 DB에 Update
+                await self.update_result(x.log_id, res)
+                ###########################################
+
                 data = {'text' : str(text), 'res' : str(res), 'final' : "true"}
                 await self.send(text_data = json.dumps(data))
                 final_end = time.time()
@@ -114,8 +133,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
                 print(f"문장 도착부터 결과 출력까지 산출 시간 : {final_end - start_voice_meta:.5f} sec")
                 print()
 
-                # for x in morphs:
-                #     print(x.form)
+
             else:
                 data = {'text' : text, 'res' : "일반",'final' : "false"}
                 await self.send(text_data=json.dumps(data))
@@ -149,7 +167,27 @@ class AudioConsumer(AsyncWebsocketConsumer):
         output2 = mel[~np.isnan(mel)] # Line 2
 
         return output2[0], output2[-1]
+    
+    @database_sync_to_async
+    def insert_record(self,text):
+        ConversationLog.objects.create(content=text)
 
+    @database_sync_to_async
+    def select_text(self):
+        return ConversationLog.objects.last()
+    
+    @database_sync_to_async
+    def drop_table(self):
+        ConversationLog.objects.all().delete()
+
+    @database_sync_to_async
+    def update_result(self, id, res):
+
+        if res == '일반' : res = 0
+        elif res == '폭언' : res = 1
+        else: res = 2
+
+        ConversationLog.objects.filter(log_id=id).update(result=res)
     
     def split_wav(self, start, end):
         start *= 48000
