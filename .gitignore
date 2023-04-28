@@ -2,3 +2,4 @@
 test1.pth
 kobert_classifier.pth
 .env
+__pycache__/
