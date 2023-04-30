@@ -75,8 +75,8 @@
                 var cName = "normal-sentence";
                 res = msg['res'];
                 console.log(res);
-                if (res == "폭언") {cName = "abuse-sentence";}
-                if (res == "성희롱") {cName = "sexual-sentence";}
+                if (res == "1") {cName = "abuse-sentence";}
+                if (res == "2") {cName = "sexual-sentence";}
                 chat_message_tag.lastChild.lastChild.className = cName;
             }
             else if (flag == false){
@@ -84,8 +84,8 @@
                 var cName = "normal-sentence";
                 res = msg['res'];
                 console.log(res);
-                if (res == "폭언") {cName = "abuse-sentence";}
-                if (res == "성희롱") {cName = "sexual-sentence";}
+                if (res == "1") {cName = "abuse-sentence";}
+                if (res == "2") {cName = "sexual-sentence";}
                 chat_message_tag.lastChild.lastChild.className = cName;
 
                 chat_message_tag.scrollTop = chat_message_tag.scrollHeight;

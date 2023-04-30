@@ -106,16 +106,19 @@ class KoBERT:
             # torch out -> numpy 형식으로 변환
             test_eval=[]
             logits = out[0].detach().cpu().numpy()
+
+            result = np.argmax(logits)
+            return result
             
-            # 값이 가장 큰 인덱스를 출력
-            if np.argmax(logits) == 0:
-                test_eval= "일반"
-            elif np.argmax(logits) == 1:
-                test_eval = "폭언"
-            elif np.argmax(logits) == 2:
-                test_eval = "성희롱"
+            # # 값이 가장 큰 인덱스를 출력
+            # if np.argmax(logits) == 0:
+            #     test_eval= "일반"
+            # elif np.argmax(logits) == 1:
+            #     test_eval = "폭언"
+            # elif np.argmax(logits) == 2:
+            #     test_eval = "성희롱"
             
-            return test_eval
+            # return test_eval
 
 
             #print(">> " + test_eval + " 문장입니다.")
