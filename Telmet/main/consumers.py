@@ -7,13 +7,11 @@ from . import test_model
 import numpy as np
 import librosa
 import time
-from asgiref.sync import async_to_sync 
-from channels.db import database_sync_to_async
 
 from .vito_streaming_api import VitoStreamingAPI
 
 # DB table Load
-from .models import ConversationLog, AbuseDictionary
+from .model_control import ModelControl
 
 kiwi = Kiwi()
 model = test_model.KoBERT()
@@ -23,7 +21,9 @@ class AudioConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         # Refresh시, ConversationLog Table Clear 진행
-        await self.drop_table()
+        self.model_control = ModelControl()
+        await self.model_control.drop_conversationlog_table()
+        #await self.drop_table()
 
         # VITO API 설정 및 Websocket 연결
         vito_streaming_api = VitoStreamingAPI()
@@ -44,23 +44,22 @@ class AudioConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.websocket.close()
 
-    async def receive(self, bytes_data ):
+    async def receive(self, bytes_data):
 
         await self.websocket.send(bytes_data)
         await self.make_amplitude_list(bytes_data)
 
-
         try:
-            asd = await asyncio.wait_for(self.websocket.recv(), timeout=1)
-            msg = json.loads(asd)
+            received_data = await asyncio.wait_for(self.websocket.recv(), timeout=1)
+            msg = json.loads(received_data)
             text = msg["alternatives"][0]["text"]
 
             if msg["final"]:
 
                 # 1. Text DB에 저장하고, 저장 결과 확인하는 부분
-                await self.insert_record(text)
-                x = await self.select_text()
-                print(x.log_id, x.content, x.time)
+                await self.model_control.insert_content(text)
+                latest_conversation = await self.model_control.select_last_conversation()
+                print(latest_conversation.content, latest_conversation.time)
                 print()
                 ##############################################
 
@@ -87,7 +86,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
 
                 # 2. 산출된 탐지 결과 DB에 Update
-                await self.update_result(x.log_id, res)
+                await self.model_control.update_result(latest_conversation.log_id, res)
                 ###########################################
 
                 data = {'text' : str(text), 'res' : str(res), 'final' : "true"}
@@ -132,26 +131,6 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
         return output2[0], output2[-1]
     
-    @database_sync_to_async
-    def insert_record(self,text):
-        ConversationLog.objects.create(content=text)
-
-    @database_sync_to_async
-    def select_text(self):
-        return ConversationLog.objects.last()
-    
-    @database_sync_to_async
-    def drop_table(self):
-        ConversationLog.objects.all().delete()
-
-    @database_sync_to_async
-    def update_result(self, id, res):
-
-        if res == '일반' : res = 0
-        elif res == '폭언' : res = 1
-        else: res = 2
-
-        ConversationLog.objects.filter(log_id=id).update(result=res)
     
     def split_wav(self, start, end):
         start *= 48000
