@@ -2,76 +2,40 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 import websockets
 import asyncio
-from main.apps import MainConfig
 from kiwipiepy import Kiwi
 from . import test_model
 import numpy as np
 import librosa
 import time
-import environ
-import os
-from pathlib import Path
-import requests
 from asgiref.sync import async_to_sync 
 from channels.db import database_sync_to_async
+
+from .vito_streaming_api import VitoStreamingAPI
 
 # DB table Load
 from .models import ConversationLog, AbuseDictionary
 
-API_BASE = "https://openapi.vito.ai"
-
-
-config = dict(
-    sample_rate="48000",
-    encoding="LINEAR16",
-    use_itn="true",
-    use_disfluency_filter="false",
-    use_profanity_filter="false",
-)
-
-STREAMING_ENDPOINT = "wss://{}/v1/transcribe:streaming?{}".format(
-    API_BASE.split("://")[1], "&".join(map("=".join, config.items()))
-)
-
-env = environ.Env(DEBUG=(bool,True))
-BASE_DIR = Path(__file__).resolve().parent.parent
-environ.Env.read_env(
-    env_file=os.path.join(BASE_DIR, '.env')
-)
-client_id = env('client_id')
-client_secret = env('client_secret')
-token = None
+kiwi = Kiwi()
+model = test_model.KoBERT()
+print("Kiwi and KoBERT Model SetUp")
 
 class AudioConsumer(AsyncWebsocketConsumer):
-    
-    def get_token(self, token):
-        if token is None:
-            resp = requests.post(
-            'https://openapi.vito.ai/v1/authenticate',
-            data={'client_id': client_id,
-                'client_secret': client_secret}
-            )
-            resp.raise_for_status()
-            temp = resp.json()
-            return temp["access_token"]
-        else:
-            return token
-
     async def connect(self):
 
+        # Refresh시, ConversationLog Table Clear 진행
         await self.drop_table()
 
-        global token        
-        token = self.get_token(token)
+        # VITO API 설정 및 Websocket 연결
+        vito_streaming_api = VitoStreamingAPI()
+        STREAMING_ENDPOINT = vito_streaming_api.STREAMING_ENDPOINT
+
+        token = vito_streaming_api.token
         conn_kwargs = dict(extra_headers={"Authorization": "bearer " + token})
 
         self.websocket = await websockets.connect(STREAMING_ENDPOINT, **conn_kwargs)
         print("VITO Websockets Connected")
-        self.kiwi = Kiwi()
-        print("Kiwi Start")
-        self.model = test_model.KoBERT()
-        print("model Start")
 
+        # 음성 메타 정보 저장을 위한 기본 리스트 선언
         self.amplitude_list = list()
         self.cnt_list = list()
         
@@ -112,11 +76,11 @@ class AudioConsumer(AsyncWebsocketConsumer):
                 # print("피치 기울기 : " + pitch_slope)
 
                 print(text)
-                morphs = self.kiwi.tokenize(text)
+                morphs = kiwi.tokenize(text)
 
                 start_bert = time.time()
                 print("=====BERT 진입======")
-                res = self.model.predict(text)  
+                res = model.predict(text)  
                 end_bert = time.time()
                 print(res)
                 print(f"bert 산출 시간 : {end_bert - start_bert:.5f} sec")
