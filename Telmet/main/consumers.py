@@ -55,50 +55,124 @@ class AudioConsumer(AsyncWebsocketConsumer):
             text = msg["alternatives"][0]["text"]
 
             if msg["final"]:
+                start_timer = time.time()
 
                 # 1. Text DB에 저장하고, 저장 결과 확인하는 부분
                 await self.model_control.insert_content(text)
-                latest_conversation = await self.model_control.select_last_conversation()
+                latest_conversation = await self.model_control.select_lastest_conversation()
                 print(latest_conversation.content, latest_conversation.time)
-                print()
-                ##############################################
 
-                start_voice_meta = time.time()
-                start, end = self.split_wav(msg["start_at"], msg["start_at"]+msg["duration"])
-                start_pitch, end_pitch = await self.analyzer(start,end)
-                print((start_pitch - end_pitch) / (msg["duration"] / 1000))
-                end_voice_meta = time.time()
+                # 2. 언어폭력 의심 문장 확인 (폭언, 성희롱, 상담원 사전)
+                start_dict_timer = time.time()
 
-                print(f"음성 메타 구하는 시간 : {end_voice_meta - start_voice_meta:.5f} sec")
-
-                # pitch_slope = (start_pitch - end_pitch / msg["duration"] / 1000)
-                # print("피치 기울기 : " + pitch_slope)
-
-                print(text)
                 morphs = kiwi.tokenize(text)
+                abuse_dict_flag = False
+                sexual_dict_flag = False
+                counselor_dict_flag = False
 
-                start_bert = time.time()
-                print("=====BERT 진입======")
-                res = model.predict(text)  
-                end_bert = time.time()
-                print(res)
-                print(f"bert 산출 시간 : {end_bert - start_bert:.5f} sec")
+                for morph in morphs:
+                    morpheme = morph.form
+
+                    # 폭언 사전
+                    if await self.model_control.morph_in_abusedict(morpheme):
+                        abuse_dict_flag = True
+                    # 성희롱 사전
+                    elif await self.model_control.morph_in_sexualdict(morpheme):
+                        sexual_dict_flag = True
+                    
+                    # 상담원 사전
+                    if await self.model_control.morph_in_counselordict(morpheme):
+                        counselor_dict_flag = True
+
+                end_dict_timer = time.time()
 
 
-                # 2. 산출된 탐지 결과 DB에 Update
-                await self.model_control.update_result(latest_conversation.log_id, res)
-                ###########################################
+                # 3. 언어폭력 의심 문장 확인 (음성 메타 정보)
+                start_voice_timer = time.time()
+
+                cur_text_bert_flag = False
+                past_text_bert_flag = False
+
+                if abuse_dict_flag or sexual_dict_flag:
+                    cur_text_bert_flag = True
+                else:   # 음성 메타 정보 판정 진행 --> 사전에서 매칭이 되었다면, 진입 x
+                    print("음성 메타 정보 추출 중")
+                    start, end = self.split_wav(msg["start_at"], msg["start_at"]+msg["duration"])
+                    start_pitch, end_pitch = await self.analyzer(start,end)
+                    print((start_pitch - end_pitch) / (msg["duration"] / 1000))
+  
+                    # 해당 부분은 추후 교체 예정
+                    if (start_pitch - end_pitch) / (msg["duration"] / 1000) < -70:
+                        cur_text_bert_flag = True
+
+                if counselor_dict_flag:
+                    past_text_bert_flag = True
+                
+                end_voice_timer = time.time()
+
+
+                print(abuse_dict_flag, sexual_dict_flag, cur_text_bert_flag, counselor_dict_flag)
+
+                # 4. KoBert 분류기 투입
+                start_bert_timer = time.time()
+
+                res = 0
+                if cur_text_bert_flag:
+                    print("1=====BERT 진입======")
+                    
+                    res = model.predict(text)  
+                    await self.model_control.update_result(latest_conversation.log_id, res)
+                    print(res)
+                
+                if past_text_bert_flag:
+                    past_1_id = latest_conversation.log_id-1
+                    past_2_id = latest_conversation.log_id-2
+                    
+                    past_1_flag = await self.model_control.id_in_conversation(past_1_id)
+                    past_2_flag = await self.model_control.id_in_conversation(past_2_id)
+
+                    if past_1_flag and past_2_flag:
+                        print("2=====BERT 진입======")
+
+                        past_1_conversation = await self.model_control.select_conversation(past_1_id)
+                        res1 = model.predict(past_1_conversation.content)  
+
+                        past_2_conversation = await self.model_control.select_conversation(past_2_id)
+                        res2 = model.predict(past_2_conversation.content)  
+
+                        await self.model_control.update_result(past_1_id, res1)
+                        await self.model_control.update_result(past_2_id, res2)
+
+                        print(res1, res2)
+
+                        data = {'res1' : str(res1), 'res2' : str(res2)}
+                        await self.send(text_data = json.dumps(data))
+                    elif past_1_flag == True:
+                        print("3=====BERT 진입======")
+                        past_1_conversation = await self.model_control.select_conversation(past_1_id)
+                        res1 = model.predict(past_1_conversation.content)  
+
+                        await self.model_control.update_result(past_1_id, res1)
+
+                        print(res1)
+
+                        data = {'res1' : str(res1), 'res2' : str(0)}
+                        await self.send(text_data = json.dumps(data))
+
+                end_bert_timer = time.time()
 
                 data = {'text' : str(text), 'res' : str(res), 'final' : "true"}
                 await self.send(text_data = json.dumps(data))
-                final_end = time.time()
+                end_timer = time.time()
 
-                print(f"문장 도착부터 결과 출력까지 산출 시간 : {final_end - start_voice_meta:.5f} sec")
+                print(f"문장 도착부터 결과 출력까지 산출 시간 : {end_timer - start_timer:.5f} sec")
+                print(f"사전 매칭 시간 : {end_dict_timer - start_dict_timer:5f} sec")
+                print(f"음성 메타 구하는 시간 : {end_voice_timer - start_voice_timer:.5f} sec")
+                print(f"BERT 판별 시간 : {end_bert_timer - start_bert_timer:.5f} sec")
                 print()
 
-
             else:
-                data = {'text' : text, 'res' : "일반",'final' : "false"}
+                data = {'text' : text, 'res' : str(0), 'final' : "false"}
                 await self.send(text_data=json.dumps(data))
 
         except:

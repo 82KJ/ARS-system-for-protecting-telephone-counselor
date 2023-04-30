@@ -59,51 +59,84 @@
             const msg = JSON.parse(event.data);
             console.log(msg)
 
-            if (flag == false && first == true){
-                first = false;
-                const element = document.createElement("div");
-                element.className = "chat-message";
+            if ("res1" in msg){
+                console.log("res1과 res2이 도착했습니다")
+                res1 = msg["res1"]
+                res2 = msg["res2"]
 
-                const wrapper = document.createElement("div");
-                wrapper.textContent = msg['text'];
+                const parentElement = chat_message_tag;
+                const children = parentElement.querySelectorAll(':scope > *');
+                const secondChildFromBehind = children[children.length - 2];
+                const thirdChildFromBehind = children[children.length - 3]; 
 
-                element.appendChild(wrapper);
-
-                chat_message_tag.appendChild(element);
-                chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
-
-                var cName = "normal-sentence";
-                res = msg['res'];
-                console.log(res);
-                if (res == "1") {cName = "abuse-sentence";}
-                if (res == "2") {cName = "sexual-sentence";}
-                chat_message_tag.lastChild.lastChild.className = cName;
-            }
-            else if (flag == false){
-                chat_message_tag.lastChild.lastChild.innerHTML = msg['text'];
-                var cName = "normal-sentence";
-                res = msg['res'];
-                console.log(res);
-                if (res == "1") {cName = "abuse-sentence";}
-                if (res == "2") {cName = "sexual-sentence";}
-                chat_message_tag.lastChild.lastChild.className = cName;
-
-                chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+                console.log(secondChildFromBehind)
+                console.log(thirdChildFromBehind)
+                
+                if (typeof secondChildFromBehind !== 'undefiend'){
+                    if (msg["res1"] == "1"){
+                        secondChildFromBehind.lastChild.className = "abuse-sentence";
+                    } else if (msg["res1"] == "2"){
+                        secondChildFromBehind.lastChild.className = "sexual-sentence";
+                    }
+                }
+                if (typeof thirdChildFromBehind !== 'undefined'){
+                    if (msg["res2"] == "1"){
+                        thirdChildFromBehind.lastChild.className = "abuse-sentence";
+                    } else if (msg["res2"] == "2"){
+                        thirdChildFromBehind.lastChild.className = "sexual-sentence";
+                    }
+                }
 
             }
             else{
-                flag = false;
-                const element = document.createElement("div");
-                element.className = "chat-message";
 
-                const wrapper = document.createElement("div");
-                wrapper.textContent = msg['text'];
-                element.appendChild(wrapper);
+                if (flag == false && first == true){
+                    first = false;
+                    const element = document.createElement("div");
+                    element.className = "chat-message";
 
-                chat_message_tag.appendChild(element);
-                chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+                    const wrapper = document.createElement("div");
+                    wrapper.textContent = msg['text'];
+
+                    element.appendChild(wrapper);
+
+                    chat_message_tag.appendChild(element);
+                    chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+
+                    var cName = "normal-sentence";
+                    res = msg['res'];
+                    console.log(res);
+                    if (res == "1") {cName = "abuse-sentence";}
+                    if (res == "2") {cName = "sexual-sentence";}
+                    chat_message_tag.lastChild.lastChild.className = cName;
+                }
+                else if (flag == false){
+                    chat_message_tag.lastChild.lastChild.innerHTML = msg['text'];
+                    var cName = "normal-sentence";
+                    res = msg['res'];
+                    console.log(res);
+                    if (res == "1") {cName = "abuse-sentence";}
+                    if (res == "2") {cName = "sexual-sentence";}
+                    chat_message_tag.lastChild.lastChild.className = cName;
+
+                    chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+
+                }
+                else{
+                    flag = false;
+                    const element = document.createElement("div");
+                    element.className = "chat-message";
+
+                    const wrapper = document.createElement("div");
+                    wrapper.textContent = msg['text'];
+                    element.appendChild(wrapper);
+
+                    chat_message_tag.appendChild(element);
+                    chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
+                }
+                flag = (msg['final'] === "true");
             }
-            flag = (msg['final'] === "true");
+            
         }
 
         setInterval(function() {
