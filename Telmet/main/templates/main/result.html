@@ -11,7 +11,55 @@
 
 {% block content %}
 
-<h1> 여기는 Result 입니다</h1>
+{% comment %} <h1> 여기는 Result 입니다</h1> {% endcomment %}
+
+<head>
+    <meta charset="utf-8">
+    <title>Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart"></canvas>
+    <script>
+        // 그래프 데이터
+        const data = {
+            labels: ['욕설', '성희롱'],
+            datasets: [{
+                label: '욕설, 성희롱 발언 횟수',
+                data: [{{count}}, {{count}}],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        };
+
+        // 그래프 설정
+        {% comment %} const config = {
+            type: 'line',
+            data: data,
+            options: {}
+        }; {% endcomment %}
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            },
+          };
+
+        // 그래프 생성
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+    </script>
+</body>
+
 
 {% endblock %}
 
