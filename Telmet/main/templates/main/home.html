@@ -1,17 +1,49 @@
 {% extends "main/base.html" %}
+{% load static %}
 
 {% block extra-style %}
 <style>
-    h1{
-        color:red;
+    .img-container{
+        margin-top:20px;
+        margin-bottom: 30px;
+    }
+    .start-button{
+        width: 200px;
+        height: 100px;
+        margin-top: 70px;
+        background-color: #FFB2B2;
+        border-radius: 0.5em;
+        border:none;
+        font-size: 50px;
+        color:white;
+    }
+
+    .divde-hr{
+        margin:0 auto;
+        width:80%;
     }
 </style>
 {% endblock %}
 
 
 {% block content %}
-
-<h1> 여기는 Home 입니다</h1>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-sm-7 d-flex justify-content-center">
+            <div class="img-container">
+                <img src="{% static 'img/logo.png' %}" width="500">
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+    <hr class="divde-hr">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-sm-6 d-flex justify-content-center">
+            <button class="start-button"> Start </button>
+        </div>
+        <div class="col"></div>
+    </div>
 
 {% endblock %}
 

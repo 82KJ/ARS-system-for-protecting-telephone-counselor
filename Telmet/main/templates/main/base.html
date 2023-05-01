@@ -6,9 +6,11 @@
 <head>
     <meta charset="utf-8" />
     <title>Attention</title>
-    <link rel="stylesheet" href="static/css/navbar.css">
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+
+    <link rel="stylesheet" href="static/css/navbar.css">
+    <link rel="stylesheet" href="static/css/card.css">
     {% block extra-style %}{% endblock %}
 </head>
 
@@ -18,7 +20,8 @@
     <div class="container my-5">
 
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col"></div>
+            <div class="col-sm-10">
                 <div class="card" style="height: 600px;">
                     <div class="card-header">
                         {% include 'main/navbar.html' %}
@@ -28,6 +31,7 @@
                     </div>
                 </div>
             </div>
+            <div class="col"></div>
         </div>
 
     </div>
