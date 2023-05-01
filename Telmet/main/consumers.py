@@ -54,6 +54,9 @@ class AudioConsumer(AsyncWebsocketConsumer):
             msg = json.loads(received_data)
             text = msg["alternatives"][0]["text"]
 
+            if text == "":
+                raise Exception("No Text")
+
             if msg["final"]:
                 start_timer = time.time()
 
@@ -177,7 +180,6 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
         except:
             pass
-            #print("time over")
     
     async def make_amplitude_list(self, data):
         new_data = np.frombuffer(data, dtype=np.int16)
