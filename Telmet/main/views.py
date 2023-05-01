@@ -11,10 +11,9 @@ def result(request):
     data = []
     conversation_log = ConversationLog.objects.all()
     count = ConversationLog.objects.count()
-    #objects.count 바꿔야함.
-    abuse_count = ConversationLog.objects.count()
-    sexual_count = ConversationLog.objects.count()
-    for log in conversation_log:
+    abuse_count = ConversationLog.objects.filter(result=1).count
+    sexual_count = ConversationLog.objects.filter(result=2).count
+    for log in conversation_log:    
         data.append({'content': log.content, 'result' : log.result})
     context = {'data': data, 
                 'count': count, 
