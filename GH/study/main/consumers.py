@@ -29,7 +29,7 @@ STREAMING_ENDPOINT = "wss://{}/v1/transcribe:streaming?{}".format(
     API_BASE.split("://")[1], "&".join(map("=".join, config.items()))
 )
 
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODExMjI4MzksImlhdCI6MTY4MTEwMTIzOSwianRpIjoiWmZZbU1ZVzRPelM0YVRTNVdVYjAiLCJwbGFuIjoiYmFzaWMiLCJzY29wZSI6InNwZWVjaCIsInN1YiI6Ik5GSk9NdlVBWWZoUWlaQThaUWl0In0.vsnLsyllxGmhSzSsusSpUN6eUCNPGAzbdP5xjKxVJro"
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODI5MjA5MTAsImlhdCI6MTY4Mjg5OTMxMCwianRpIjoiSGw3UkNlWXhwaE90RXBIeEk3RGwiLCJwbGFuIjoiYmFzaWMiLCJzY29wZSI6InNwZWVjaCIsInN1YiI6Ik5GSk9NdlVBWWZoUWlaQThaUWl0In0.se76GiKI02sXtt-CZYON2ypOycCq7rMmSoBcmann4Q0"
 
 conn_kwargs = dict(extra_headers={"Authorization": "bearer " + token})
 
@@ -64,8 +64,6 @@ class AudioConsumer(AsyncWebsocketConsumer):
         await self.websocket.close()
 
     async def receive(self, bytes_data ):
-
-
         await self.websocket.send(bytes_data)
         await self.make_amplitude_list(bytes_data)
         #print(len(bytes_data))
@@ -76,24 +74,35 @@ class AudioConsumer(AsyncWebsocketConsumer):
             msg = json.loads(asd)
             text = msg["alternatives"][0]["text"]
 
+            if text == "":
+                raise Exception("no text case")
+            
             if msg["final"]:
                 #print(msg)
                 start_voice_meta = time.time()
                 
+                start = self.cnt_list[0]
+                end = self.cnt_list[-1]
+
+                self.cnt_list.clear()
+                self.cnt_list.append(0)
+
                 #print("time :  [ " + (msg["start_at"])/1000 + " : " + (msg["start_at"]+msg["duration"])/1000 + " ]")
-                start, end = await self.split_wav(msg["start_at"], msg["start_at"]+msg["duration"])
-                #print("data :  [ " + start + " : " + end + " ]")
-                #print(start_idx, end_idx)
+                #start, end = await self.split_wav(msg["start_at"], msg["start_at"]+msg["duration"])
+                print(len(self.amplitude_list))
+                print(self.amplitude_list)
                 
                 start_pitch, end_pitch = await self.analyzer(start,end)
-                #print("pitch : [ " + start_pitch + " : " + end_pitch + " ]")
+                self.amplitude_list = []
+
+                #print("pitch : [ ", start_pitch, " : ", end_pitch, " ]")
 
                 if(np.isnan(start_pitch) or np.isnan(end_pitch)):
+                    print("isNaN")
                     pitch_slope = 0
                 else:
                     pitch_slope = (end_pitch - start_pitch) / (msg["duration"] / 1000)
 
-                
                 end_voice_meta = time.time()
 
                 #print(f"음성 메타 구하는 시간 : {end_voice_meta - start_voice_meta:.5f} sec")
@@ -103,12 +112,17 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
                 print(f'pitch_slope:  {pitch_slope:.5f}')
 
-                start_bert = time.time()
-                print("=====BERT 진입======")
-                res = self.model.predict(text)  
-                end_bert = time.time()
-                print(res)
-                #print(f"bert 산출 시간 : {end_bert - start_bert:.5f} sec")
+                # bert 진입 조건 필요
+                if(pitch_slope < -30 or pitch_slope >20):
+                    start_bert = time.time()
+                    print("=====BERT 진입======")
+                    res = self.model.predict(text)  
+                    end_bert = time.time()
+                    print(res)
+                    #print(f"bert 산출 시간 : {end_bert - start_bert:.5f} sec")
+
+                else:
+                    print("일반")
 
                 data = {'text' : str(text), 'res' : str(res), 'final' : "true"}
                 await self.send(text_data = json.dumps(data))
@@ -134,7 +148,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
             if np.isnan(new_data[i]) == False:
                 new_buffer[i] = new_data[i]
         y = librosa.to_mono(new_buffer)
-        #print(len(y))
+
         self.amplitude_list = np.append(self.amplitude_list, y)
 
         cnt = self.cnt_list[-1] + len(y)
@@ -142,14 +156,15 @@ class AudioConsumer(AsyncWebsocketConsumer):
 
     async def analyzer(self, start, end):
         x = min(int((end - start)/2), 48000)
-        data_start = self.amplitude_list[start : start + x]
+
+        data_start = self.amplitude_list[0 : x]
         data_end = self.amplitude_list[end - x : end]
 
         # 음성에서 기본주파수 f0 추출
         # [C2=65.41 : C7=2093]
         f0_s, voiced_flag, voiced_probs = librosa.pyin(data_start, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'), sr=48000)
         f0_e, voiced_flag, voiced_probs = librosa.pyin(data_end, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'), sr=48000)
-        
+
         # 직접 mel 변환
         # [C2=166 : C7=3377]
         mel1 = 1127.01048 * np.log(1 + f0_s / 700)
@@ -160,8 +175,8 @@ class AudioConsumer(AsyncWebsocketConsumer):
         output2 = mel2[~np.isnan(mel2)]
 
         # 두 구간의 mel 데이터 확인
-        #print("start: " + output1)
-        #print("end: " + output2)
+        #print("start: ", output1)
+        #print("end: ", output2)
 
         # 구간의 평균을 반환
         return np.mean(output1), np.mean(output2)
