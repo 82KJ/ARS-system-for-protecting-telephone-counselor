@@ -1,7 +1,7 @@
 .card{
     /* border-color:#f2f2f2;
     border-width: 5px; */
-    box-shadow: 0 2px 5px rgba(0,0,0,.25)
+    box-shadow: 0 2px 5px rgba(0,0,0,.25);
 
 }
 
@@ -16,7 +16,4 @@
     /* border-radius: 1em; */
     /* border-top: 1px solid; */
 }
-
-
-
 
