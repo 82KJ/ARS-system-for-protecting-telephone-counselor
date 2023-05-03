@@ -6,7 +6,12 @@
 
 
 {% block content %}
-<div id="chat_messages" class="overflow-auto"></div>
+<div id="chat_messages" class="overflow-auto">
+    <div id="cur_time">
+        {{ cur_time }}
+    </div>
+
+</div>
 
 <div class="button-box">
     <button id="recordButton">

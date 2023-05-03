@@ -1,3 +1,13 @@
+#cur_time{
+    color:grey;
+    font-weight: bolder;
+
+
+    padding-left:0.3em;
+    padding-bottom:0.5em;
+
+}
+
 .chat-message > div {
     background-color : #3b3b3b;
     color : #e1e1e1;
