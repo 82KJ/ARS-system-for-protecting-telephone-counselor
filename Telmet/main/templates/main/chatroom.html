@@ -10,7 +10,6 @@
     {{ cur_time }}
 </div>
 <div id="chat_messages">
-
 </div>
 
 <hr class="divde-line">
@@ -144,6 +143,14 @@
                     chat_message_tag.scrollTop = chat_message_tag.scrollHeight;
                 }
                 flag = (msg['final'] === "true");
+
+                if ("time" in msg){
+                    const element = chat_message_tag.lastChild;
+                    const wrapper = document.createElement("span");
+                    wrapper.className = "chat-time";
+                    wrapper.textContent = msg['time'];
+                    element.appendChild(wrapper);
+                }
             }
             
         }

@@ -163,8 +163,9 @@ class AudioConsumer(AsyncWebsocketConsumer):
                         await self.send(text_data = json.dumps(data))
 
                 end_bert_timer = time.time()
-
-                data = {'text' : str(text), 'res' : str(res), 'final' : "true"}
+                print(latest_conversation.time)
+                text_time = str(latest_conversation.time)[11:-7]
+                data = {'text' : str(text), 'res' : str(res), 'final' : "true", 'time' : text_time}
                 await self.send(text_data = json.dumps(data))
                 end_timer = time.time()
 

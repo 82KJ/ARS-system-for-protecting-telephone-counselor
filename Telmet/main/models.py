@@ -38,7 +38,7 @@ class ConversationLog(models.Model):
     log_id = models.AutoField(primary_key=True)
     content = models.TextField(blank=True, null=True)
     time = models.DateTimeField(auto_now_add=True)
-    result = models.IntegerField(blank=True, null=True) #공백허용
+    result = models.IntegerField(blank=True, null=True, default=0) #공백허용
 
     def __str__(self):
         return self.content

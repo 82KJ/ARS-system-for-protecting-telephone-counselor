@@ -45,11 +45,16 @@
 
 /* 채팅 메세지 CSS */
 
-.chat-message > div {
-    background-color : #3b3b3b;
-    color : #e1e1e1;
-    border-radius : 0.8em;
-    padding : 0.4em;
+.chat-message{
+    display : flex;
+}
+
+.chat-message div{
+    background-color : #f2f2f2;
+    font-size:1.2em;
+    font-weight: 800;
+    border-radius : 0.5em;
+    padding : 0.6em;
     margin : 0.4em 0;
     display : inline-block;
     max-width : 80%;
@@ -57,13 +62,26 @@
 }
 
 .chat-message > .abuse-sentence {
-    background-color : red;
+    background-color : rgb(255, 113, 113);
+    color:white;
 }
 
 .chat-message > .sexual-sentence {
-    background-color : blue;
+    background-color : rgb(122, 122, 255);
+    color:white;
+
 }
 
+.chat-time {
+    display: flex;
+    font-size: 1em;
+    align-items: end;
+    padding-bottom:0.5em;
+    padding-left:0.5em;
+    color: grey;
+    font-weight :500;
+
+}
 
 /* 녹음 버튼 CSS */
 
