@@ -1,12 +1,49 @@
 #cur_time{
-    color:grey;
-    font-weight: bolder;
-
-
-    padding-left:0.3em;
+    width:90%;
+    margin-left:auto;
     padding-bottom:0.5em;
 
+    color:grey;
+    font-weight: bolder;    
 }
+
+/* 채팅룸 CSS */
+
+#chat_messages{
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    height:75%;
+    width:80%;
+    margin:auto;
+}
+
+#chat_messages::-webkit-scrollbar{
+    width:0.7em;
+}
+
+#chat_messages::-webkit-scrollbar-track {
+    background-color: #FFB2B2;
+    border-radius: 1em;    
+}
+
+#chat_messages::-webkit-scrollbar-thumb{
+    background-color: #ff8787;
+    border-radius: 1em;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+
+.divde-line{
+    border: 0.1em dashed grey;
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:0;
+}
+
+
+/* 채팅 메세지 CSS */
 
 .chat-message > div {
     background-color : #3b3b3b;
@@ -27,17 +64,13 @@
     background-color : blue;
 }
 
-#chat_messages{
-    height:80%;
-    width:80%;
-    margin:auto;
-    border-bottom: 0.5px dashed grey;
-}
+
+/* 녹음 버튼 CSS */
 
 .button-box{
     display:flex;
     justify-content: center;
-    padding-top:20px;
+    padding-top:1em;
 }
 
 #recordButton {
@@ -50,7 +83,6 @@
     border-radius: 50%;
     overflow: hidden;
 }
-
 
 #recordButton .outer-circle {
     position: absolute;
