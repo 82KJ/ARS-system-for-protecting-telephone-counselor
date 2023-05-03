@@ -28,7 +28,7 @@ body{
 .nav_link{
     color:black;
     text-decoration: none;
-    font-size: 30px;
+    font-size: 2em;
     padding-left:1.6em;
     padding-right: 1.6em;
 
@@ -37,22 +37,22 @@ body{
 .nav_item.active{
     font-weight: bolder;
     color:#FFB2B2;
-    border-bottom: 7px solid #FFB2B2;
+    border-bottom: 0.3em solid #FFB2B2;
 }
 
 .navbar_menu :hover {
     background: #FFB2B2;
-    border-radius: 4px;
+    border-radius: 0.3em;
     color:white;
 }
 
 .navbar_menu :hover .nav_item.active{
     background: white;
-    border-radius: 4px;
+    border-radius: 0.3em;
     color:#FFB2B2;
 }
 
 .navbar_menu li {
-    border-bottom: 5px solid #f2f2f2;
+    border-bottom: 0.3em solid #f2f2f2;
 }
 
