@@ -44,3 +44,25 @@ class ModelControl:
     def morph_in_counselordict(self, morph):
         return CounselorDictionary.objects.filter(morpheme=morph).exists()
     
+    # result DB
+    def load_abuse_data(self):
+        abuse_data = []
+        conversation_log = ConversationLog.objects.all()
+        for log in converstaion_log:
+            if log.result==1 :
+                abuse_data.append({'content': log.content, 'time' : log.time, 'result' : log.result})
+        return aubse_data
+    
+    def load_sexual_data(self):
+        sexual_data = []
+        converstaion_log = ConversationLog.objects.all()
+        for log in converstaion_log:
+            if log.result==2 :
+                sexual_data.append({'content': log.content, 'time' : log.time, 'result' : log.result})
+    
+    def load_abuse_count(self):
+        return ConversationLog.objects.filter(result=1).count
+    
+    def load_sexual_count(self):
+        return ConversationLog.objects.filter(result=2).count
+    
