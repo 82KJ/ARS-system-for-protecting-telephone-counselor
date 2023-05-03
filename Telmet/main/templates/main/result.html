@@ -58,9 +58,11 @@
             config
         );
     </script>
-
-    <h1>{{abuse_data}}  </h1>
-</body>
+    {% comment %} 리스트 내용을 가져올 때는 for문을 써야함 {% endcomment %}
+    {% for absue in abuse_data %}
+        <p>{{absue.content}}</p>
+    {% endfor %}
+</body> 
 
 
 {% endblock %}
