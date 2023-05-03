@@ -2,6 +2,9 @@ from django.shortcuts import render
 from main.models import ConversationLog
 from datetime import datetime
 
+# result DB
+from main.model_control import ModelControl
+
 def home(request):
     return render(request, 'main/home.html')
 
@@ -22,5 +25,13 @@ def chatroom(request):
     return render(request, 'main/chatroom.html', res)
 
 def result(request):
-    return render(request, 'main/result.html')
+    # model_control에 있는 함수 가져오기
+    model_control = ModelControl()
+    context = {
+                'abuse_data' : model_control.load_abuse_data(),
+                'sexual_data' : model_control.load_sexual_data(),
+                'abuse_count' : model_control.load_abuse_count(),
+                'sexual_count' : model_control.load_sexual_count(),
+                }
+    return render(request, 'main/result.html', context)
 
