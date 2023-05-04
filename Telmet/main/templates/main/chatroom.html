@@ -13,6 +13,17 @@
 </div>
 
 <hr class="divde-line">
+<div class="stop-message">
+    <div class="warning-message">
+        <span id="default-start-message"></span>
+        <span id="abuse-cnt-message"></span>
+        <span id="default-middle-message"></span>
+        <span id="sexual-cnt-message"></span>
+        <span id="default-last-message"></span>
+    </div>
+</div>
+<span id="default-message">녹음을 진행하려면, 아래의 버튼을 눌러주세요</span>
+
 
 <div class="button-box">
     <button id="recordButton">
@@ -25,7 +36,7 @@
 
 {% block extra-script %}
 <script>
-    websocket = new WebSocket('ws://localhost:8000/ws/');
+    var websocket = new WebSocket('ws://localhost:8000/ws/');
 
     var audioContext = new AudioContext();
     console.log(audioContext.sampleRate);
@@ -33,6 +44,7 @@
     var log = document.getElementById("log");
 
     var handleSuccess = function(stream) {
+        console.log(recording);
         var context = new AudioContext();
         var source = context.createMediaStreamSource(stream);
         var processor = context.createScriptProcessor(1024, 1, 1);
@@ -40,22 +52,70 @@
         var flag = false;
         var first = true;
   
+        var recording = false;
+
         source.connect(processor);
         processor.connect(context.destination);
 
         var buffer = [];
-        var recording = false;
 
-        document.getElementById("recordButton").addEventListener("click", function() {
+        recordEventListner = function() {
             if (recording == false){
                 document.getElementById("recordButton").classList.add("recording");
+                change_default_message(1);
             } else{
                 document.getElementById("recordButton").classList.remove("recording");
                 websocket.close();
+                create_result_button();
             }
-            
             recording = !recording;
-        });
+        }
+
+        document.getElementById("recordButton").addEventListener("click", recordEventListner);
+
+        close_websocket = function(){
+            document.getElementById("recordButton").classList.remove("recording");
+            websocket.close();
+            recording = !recording;
+        }
+
+        create_result_button = function(){
+            const recordButton = document.getElementById("recordButton");
+            const outerCircle = document.querySelector(".outer-circle");
+            const innerCircle = document.querySelector(".inner-circle");
+
+            if (outerCircle && innerCircle) {
+                outerCircle.remove();
+                innerCircle.remove();
+
+                recordButton.style.borderRadius="0.5em";
+                recordButton.style.width = "10em";
+                recordButton.style.height = "2em";
+                recordButton.style.fontSize = "1.5em";
+                recordButton.style.color = "white";
+                recordButton.style.fontWeight = "bold";
+                recordButton.innerHTML = "Go To Result";
+            }
+
+            change_default_message(2);
+            recordButton.removeEventListener("click", recordEventListner);
+            recordButton.addEventListener("click", change_button_click_event);
+        }
+
+        change_default_message = function(flag){
+            const default_message = document.querySelector("#default-message");
+            if (flag == 1){
+                default_message.innerHTML = "녹음을 중지하려면, 아래의 버튼을 눌러주세요";
+            }
+
+            if (flag == 2){
+                default_message.innerHTML = "결과를 확인하려면, 아래의 버튼을 눌러주세요";
+            }
+        }
+
+        change_button_click_event = function(){
+            window.location.href = "/result";
+        }
 
         processor.onaudioprocess = function(e) {
             if (!recording) return;
@@ -82,16 +142,16 @@
                 
                 if (typeof secondChildFromBehind !== 'undefiend'){
                     if (msg["res1"] == "1"){
-                        secondChildFromBehind.lastChild.className = "abuse-sentence";
+                        secondChildFromBehind.firstChild.className = "abuse-sentence";
                     } else if (msg["res1"] == "2"){
-                        secondChildFromBehind.lastChild.className = "sexual-sentence";
+                        secondChildFromBehind.firstChild.className = "sexual-sentence";
                     }
                 }
                 if (typeof thirdChildFromBehind !== 'undefined'){
                     if (msg["res2"] == "1"){
-                        thirdChildFromBehind.lastChild.className = "abuse-sentence";
+                        thirdChildFromBehind.firstChild.className = "abuse-sentence";
                     } else if (msg["res2"] == "2"){
-                        thirdChildFromBehind.lastChild.className = "sexual-sentence";
+                        thirdChildFromBehind.firstChild.className = "sexual-sentence";
                     }
                 }
 
@@ -150,6 +210,26 @@
                     wrapper.className = "chat-time";
                     wrapper.textContent = msg['time'];
                     element.appendChild(wrapper);
+                }
+
+                if (msg["stop_flag"] == "True"){
+                    const default_message = document.querySelector("#default-message");
+                    const default_start_message = document.querySelector("#default-start-message");
+                    const abuse_cnt_message = document.querySelector("#abuse-cnt-message");
+                    const default_middle_message = document.querySelector("#default-middle-message");
+                    const sexual_cnt_message = document.querySelector("#sexual-cnt-message");
+                    const default_last_message = document.querySelector("#default-last-message");
+                    
+                    default_start_message.innerHTML = "해당 사용자는 ";
+                    abuse_cnt_message.innerHTML = "(폭언 : " + msg["abuse_cnt"] + "회";
+                    default_middle_message.innerHTML = " | ";
+                    sexual_cnt_message.innerHTML = "성희롱 : " + msg["sexual_cnt"] + "회)";
+                    default_last_message.innerHTML = "에 해당하므로 자동으로 강제 종료됩니다";                    
+                    
+                    close_websocket();
+                    create_result_button();
+                    default_message.innerHTML = "";
+
                 }
             }
             

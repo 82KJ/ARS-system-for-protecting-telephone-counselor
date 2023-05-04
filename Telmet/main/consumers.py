@@ -38,6 +38,10 @@ class AudioConsumer(AsyncWebsocketConsumer):
         # 음성 메타 정보 저장을 위한 기본 리스트 선언
         self.amplitude_list = list()
         self.cnt_list = list()
+
+        # 언어폭력 횟수 체크
+        self.abuse_cnt = 0
+        self.sexual_cnt = 0
         
         await self.accept()
 
@@ -138,14 +142,24 @@ class AudioConsumer(AsyncWebsocketConsumer):
                         print("2=====BERT 진입======")
 
                         past_1_conversation = await self.model_control.select_conversation(past_1_id)
+                        past_1_res = past_1_conversation.result
                         res1 = model.predict(past_1_conversation.content)  
 
                         past_2_conversation = await self.model_control.select_conversation(past_2_id)
+                        past_2_res = past_2_conversation.result
                         res2 = model.predict(past_2_conversation.content)  
-
+                        
                         await self.model_control.update_result(past_1_id, res1)
                         await self.model_control.update_result(past_2_id, res2)
 
+                        if past_1_res != res1:
+                            if res1 == 1: self.abuse_cnt += 1
+                            if res1 == 2: self.sexual_cnt += 1
+                        
+                        if past_2_res != res2:
+                            if res2 == 1: self.abuse_cnt += 1
+                            if res2 == 2: self.sexual_cnt += 1
+                        print(past_1_res, past_2_res)
                         print(res1, res2)
 
                         data = {'res1' : str(res1), 'res2' : str(res2)}
@@ -153,9 +167,14 @@ class AudioConsumer(AsyncWebsocketConsumer):
                     elif past_1_flag == True:
                         print("3=====BERT 진입======")
                         past_1_conversation = await self.model_control.select_conversation(past_1_id)
+                        past_1_res = past_1_conversation.result
                         res1 = model.predict(past_1_conversation.content)  
 
                         await self.model_control.update_result(past_1_id, res1)
+
+                        if past_1_res != res1:
+                            if past_1_res == 1: self.abuse_cnt += 1
+                            if past_1_res == 2: self.sexual_cnt += 1
 
                         print(res1)
 
@@ -163,9 +182,25 @@ class AudioConsumer(AsyncWebsocketConsumer):
                         await self.send(text_data = json.dumps(data))
 
                 end_bert_timer = time.time()
-                print(latest_conversation.time)
+
+                # 언어폭력 횟수 추가
+                if res == 1:
+                    self.abuse_cnt += 1
+                elif res == 2:
+                    self.sexual_cnt += 1
+                
+                stop_flag = False
+                if self.sexual_cnt == 2:
+                    stop_flag = True
+                elif self.abuse_cnt + self.sexual_cnt == 3:
+                    stop_flag = True
+                
+                print("폭언 횟수 : ", self.abuse_cnt)
+                print("성희롱 횟수 :", self.sexual_cnt)
+
                 text_time = str(latest_conversation.time)[11:-7]
-                data = {'text' : str(text), 'res' : str(res), 'final' : "true", 'time' : text_time}
+                data = {'text' : str(text), 'res' : str(res), 'final' : "true", 'time' : text_time, 
+                        'stop_flag':str(stop_flag), 'abuse_cnt':str(self.abuse_cnt), 'sexual_cnt':str(self.sexual_cnt)}
                 await self.send(text_data = json.dumps(data))
                 end_timer = time.time()
 
