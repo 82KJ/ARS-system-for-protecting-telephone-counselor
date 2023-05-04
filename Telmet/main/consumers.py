@@ -173,8 +173,8 @@ class AudioConsumer(AsyncWebsocketConsumer):
                         await self.model_control.update_result(past_1_id, res1)
 
                         if past_1_res != res1:
-                            if past_1_res == 1: self.abuse_cnt += 1
-                            if past_1_res == 2: self.sexual_cnt += 1
+                            if res1 == 1: self.abuse_cnt += 1
+                            if res1 == 2: self.sexual_cnt += 1
 
                         print(res1)
 
