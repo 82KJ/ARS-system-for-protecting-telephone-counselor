@@ -73,11 +73,14 @@ class ModelControl:
                 sexual_data.append({'content': log.content, 'time' : log.time, 'result' : log.result})
         return sexual_data
 
-    def load_abuse_count(self):
+    def get_abuse_conversation_count(self):
         return ConversationLog.objects.filter(result=1).count
     
-    def load_sexual_count(self):
+    def get_sexual_conversation_count(self):
         return ConversationLog.objects.filter(result=2).count
+    
+    def get_total_conversation_count(self):
+        return ConversationLog.objects.all().count
     
     def get_total_time(self):
         first_record_time = RecordStartTime.objects.first()
@@ -88,3 +91,4 @@ class ModelControl:
         else:
             delta_time = last_conversation.time - first_record_time.time
             return delta_time.seconds
+    
