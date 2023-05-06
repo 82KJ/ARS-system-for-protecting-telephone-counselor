@@ -1,8 +1,10 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% load render_table from django_tables2 %}
 
 {% block extra-style %}
 <link rel="stylesheet" href="static/css/result.css">
+<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 
@@ -12,42 +14,40 @@
         <div class="card-inner-box">
             <div class="origin-card">
                 <div class="origin-card-header">
-                    <div class="card-title">
-                        Total Record Time
+                    <div class="origin-card-title">
+                        Record Time
                     </div>
-                    <div class="card-logo">
-                        
+                    <div class="origin-card-logo">
+                        <i class="fa-solid fa-microphone" style="color: #f6747a;"></i>
                     </div>
                 </div>
                 <div class="origin-card-body">
-                    Card Body
+                    240 sec
                 </div>
 
             </div>
-            <div class="origin-card">
+            <div class="origin-card" id="count-card">
                 <div class="origin-card-header">
-                    <div class="card-title">
-                        Total Sentence Count
+                    <div class="origin-card-title">
+                        Total Count
                     </div>
-                    <div class="card-logo">
-                        
+                    <div class="origin-card-logo">
+                        <i class="fa-solid fa-list-check" style="color: #f6747a;"></i>
                     </div>
                 </div>
                 <div class="origin-card-body">
-                    Card Body
+                    23 ea
                 </div>
             </div>
             <div class="origin-card">
                 <div class="origin-card-header">
-                    <div class="card-title">
-                        요기는 미정
+                    <div class="origin-card-title">
                     </div>
-                    <div class="card-logo">
+                    <div class="origin-card-logo">
                         
                     </div>
                 </div>
                 <div class="origin-card-body">
-                    Card Body
                 </div>
             </div>
         </div>
