@@ -32,8 +32,11 @@ def result(request):
     # 전체 record time 받아오기
     record_time = model_control.get_total_time()
 
-    # 전체 대화 문장 수 받아오기
+    # 조건별 대화 문장 수 받아오기
     total_count = model_control.get_total_conversation_count()
+    normal_count = model_control.get_normal_conversation_count()
+    abuse_count = model_control.get_abuse_conversation_count()
+    sexual_count = model_control.get_sexual_conversation_count()
 
     #장고 테이블
     logs = ConversationLog.objects.all()
@@ -41,10 +44,11 @@ def result(request):
     context = {
                 'record_time' : str(record_time),
                 'total_count' : total_count,
+                'normal_count' : normal_count,
+                'abuse_count' : abuse_count,
+                'sexual_count' : sexual_count,
                 'abuse_data' : model_control.load_abuse_data(),
                 'sexual_data' : model_control.load_sexual_data(),
-                'abuse_count' : model_control.get_abuse_conversation_count(),
-                'sexual_count' : model_control.get_sexual_conversation_count(),
                 'table' : table, #장고 테이블
                 }
     return render(request, 'main/result.html', context)

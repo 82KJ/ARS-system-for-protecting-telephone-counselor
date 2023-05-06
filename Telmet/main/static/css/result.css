@@ -70,13 +70,20 @@
 
 .origin-card-detail{
     font-size:0.3em;
-    font-weight: bold;
+    font-weight: lighter;
     height:30%;
-    margin-left:1.6em;
+    margin-left:1.9em;
 }
 
 
 /* Table Box CSS */
+
+.table-row{
+    height:70%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .table-outer-box{
     display:flex;
@@ -91,6 +98,3 @@
 }
 
 
-.table-row{
-    height:70%;
-}

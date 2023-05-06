@@ -73,6 +73,9 @@ class ModelControl:
                 sexual_data.append({'content': log.content, 'time' : log.time, 'result' : log.result})
         return sexual_data
 
+    def get_normal_conversation_count(self):
+        return ConversationLog.objects.filter(result=0).count
+
     def get_abuse_conversation_count(self):
         return ConversationLog.objects.filter(result=1).count
     
