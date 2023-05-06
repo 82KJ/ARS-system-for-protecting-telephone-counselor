@@ -1,0 +1,31 @@
+.cards-row{
+    height:30%;
+}
+
+.table-row{
+    height:70%;
+}
+
+.card-outer-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-inner-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-outer-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-inner-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,70 +1,36 @@
 {% extends "main/base.html" %}
+{% load render_table from django_tables2 %}
 
 {% block extra-style %}
-<style>
-    h1{
-        color:green;
-    }
-</style>
+<link rel="stylesheet" href="static/css/result.css">
 {% endblock %}
 
 
 {% block content %}
+<div class="cards-row">
+    <div class="card-outer-box">
+        <div class="card-inner-box">
+            asdf
+        </div>
+    </div>
 
-{% comment %} <h1> 여기는 Result 입니다</h1> {% endcomment %}
+</div>
 
-<head>
-    <meta charset="utf-8">
-    <title>Graph</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <canvas id="myChart"></canvas>
-    <script>
-        // 그래프 데이터
-        const data = {
-            labels: ['욕설', '성희롱'],
-            datasets: [{
-                label: '욕설, 성희롱 발언 횟수',
-                data: [{{abuse_count}}, {{sexual_count}}],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        };
-
-        // 그래프 설정
-        const config = {
-            type: 'bar',
-            data: data,
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              }
-            },
-          };
-
-        // 그래프 생성
-        const myChart = new Chart(
-            document.getElementById('myChart'),
-            config
-        );
-    </script>
-    {% comment %} 리스트 내용을 가져올 때는 for문을 써야함 {% endcomment %}
-    {% for absue in abuse_data %}
-        <p>{{absue.content}}</p>
-    {% endfor %}
+<div class="table-row">
+    <div class="table-outer-box">
+        <div class="table-inner-box">
+            {% for absue in abuse_data %}
+                <p>{{absue.content}}</p>
+            {% endfor %}
     
-    {% for sexual in sexual_data %}
-        <p>{{sexual.content}}</p>
-    {% endfor %}
-    
-    {% comment %} django_tables2 사용 {% endcomment %}
-    {% load render_table from django_tables2 %}
-    {% render_table table %}
-</body> 
+            {% for sexual in sexual_data %}
+                <p>{{sexual.content}}</p>
+            {% endfor %}
+        
+            {% render_table table %}
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}
