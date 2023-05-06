@@ -56,15 +56,25 @@
 
 .origin-card-body{
     color:grey;
-    height:70%;
-    display:flex;
-    justify-content: start;
-    align-items: center;
-    margin-left:0.5em;
-    padding-bottom:0.3em;
+    height:65%;
     font-size:2.3em;
     font-weight:bolder;
 }
+
+.origin-card-content{
+    margin-left:0.5em;
+    margin-bottom:0.1em;
+    height: 62%;
+    width: 100%;
+}
+
+.origin-card-detail{
+    font-size:0.3em;
+    font-weight: bold;
+    height:30%;
+    margin-left:1.6em;
+}
+
 
 /* Table Box CSS */
 
