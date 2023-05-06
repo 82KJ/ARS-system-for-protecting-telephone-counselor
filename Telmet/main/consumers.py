@@ -23,6 +23,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
         # Refresh시, ConversationLog Table Clear 진행
         self.model_control = ModelControl()
         await self.model_control.drop_conversationlog_table()
+        await self.model_control.drop_recordstarttime_table()
         #await self.drop_table()
 
         # VITO API 설정 및 Websocket 연결
@@ -43,12 +44,19 @@ class AudioConsumer(AsyncWebsocketConsumer):
         self.abuse_cnt = 0
         self.sexual_cnt = 0
         
+        # 녹음 버튼을 누른 시각
+        self.record_start_time = False
+
         await self.accept()
 
     async def disconnect(self, close_code):
         await self.websocket.close()
 
     async def receive(self, bytes_data):
+
+        if self.record_start_time == False:
+            await self.model_control.insert_record_time()
+            self.record_start_time = True
 
         await self.websocket.send(bytes_data)
         await self.make_amplitude_list(bytes_data)

@@ -1,10 +1,22 @@
 from channels.db import database_sync_to_async
-from .models import ConversationLog
+from .models import ConversationLog, RecordStartTime
 from .models import AbuseDictionary, SexualDictionary, CounselorDictionary
 
 class ModelControl:
 
     # Async Channels에서 Transaction 조작을 위해 database_sync_to_async decorator 사용
+
+    # RecordStartTime CRUD
+    @database_sync_to_async
+    def insert_record_time(self):
+        RecordStartTime.objects.create()
+
+    @database_sync_to_async
+    def drop_recordstarttime_table(self):
+        RecordStartTime.objects.all().delete()
+
+    def select_start_time(self):
+        RecordStartTime.objects.first()
 
     # ConversationLog CRUD
     @database_sync_to_async
@@ -67,3 +79,12 @@ class ModelControl:
     def load_sexual_count(self):
         return ConversationLog.objects.filter(result=2).count
     
+    def get_total_time(self):
+        first_record_time = RecordStartTime.objects.first()
+        last_conversation = ConversationLog.objects.last()
+
+        if first_record_time is None or last_conversation is None:
+            return 0
+        else:
+            delta_time = last_conversation.time - first_record_time.time
+            return delta_time.seconds

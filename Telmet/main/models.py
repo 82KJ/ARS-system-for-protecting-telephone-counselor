@@ -46,4 +46,7 @@ class ConversationLog(models.Model):
     class Meta:
         verbose_name = 'Conversation Log'
         verbose_name_plural = 'Conversation Log'
-    
+
+class RecordStartTime(models.Model):
+    id = models.AutoField(primary_key=True)
+    time = models.DateTimeField(auto_now_add=True)

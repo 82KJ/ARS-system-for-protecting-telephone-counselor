@@ -28,10 +28,15 @@ def chatroom(request):
 def result(request):
     # model_control에 있는 함수 가져오기
     model_control = ModelControl()
+
+    # 전체 record time 받아오기
+    record_time = model_control.get_total_time()
+
     #장고 테이블
     logs = ConversationLog.objects.all()
     table = ResultTable(logs)
     context = {
+                'record_time' : str(record_time),
                 'abuse_data' : model_control.load_abuse_data(),
                 'sexual_data' : model_control.load_sexual_data(),
                 'abuse_count' : model_control.load_abuse_count(),
