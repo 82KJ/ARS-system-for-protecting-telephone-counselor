@@ -10,7 +10,46 @@
 <div class="cards-row">
     <div class="card-outer-box">
         <div class="card-inner-box">
-            asdf
+            <div class="origin-card">
+                <div class="origin-card-header">
+                    <div class="card-title">
+                        Total Record Time
+                    </div>
+                    <div class="card-logo">
+                        
+                    </div>
+                </div>
+                <div class="origin-card-body">
+                    Card Body
+                </div>
+
+            </div>
+            <div class="origin-card">
+                <div class="origin-card-header">
+                    <div class="card-title">
+                        Total Sentence Count
+                    </div>
+                    <div class="card-logo">
+                        
+                    </div>
+                </div>
+                <div class="origin-card-body">
+                    Card Body
+                </div>
+            </div>
+            <div class="origin-card">
+                <div class="origin-card-header">
+                    <div class="card-title">
+                        요기는 미정
+                    </div>
+                    <div class="card-logo">
+                        
+                    </div>
+                </div>
+                <div class="origin-card-body">
+                    Card Body
+                </div>
+            </div>
         </div>
     </div>
 
@@ -19,14 +58,6 @@
 <div class="table-row">
     <div class="table-outer-box">
         <div class="table-inner-box">
-            {% for absue in abuse_data %}
-                <p>{{absue.content}}</p>
-            {% endfor %}
-    
-            {% for sexual in sexual_data %}
-                <p>{{sexual.content}}</p>
-            {% endfor %}
-        
             {% render_table table %}
         </div>
     </div>

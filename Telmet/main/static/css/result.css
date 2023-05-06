@@ -1,22 +1,37 @@
+/* Card Box CSS */
+
 .cards-row{
     height:30%;
-}
-
-.table-row{
-    height:70%;
 }
 
 .card-outer-box{
     display:flex;
     justify-content: center;
     align-items: center;
+    height:100%;
 }
 
 .card-inner-box{
     display:flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+    width:80%;
+    height:100%;
 }
+
+.origin-card{
+    width:27%;
+    height:70%;
+    border:0.1em solid black;
+    border-radius: 0.8em;
+
+}
+
+
+
+
+
+/* Table Box CSS */
 
 .table-outer-box{
     display:flex;
@@ -28,4 +43,9 @@
     display:flex;
     justify-content: center;
     align-items: center;
+}
+
+
+.table-row{
+    height:70%;
 }
