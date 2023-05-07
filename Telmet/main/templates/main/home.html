@@ -3,51 +3,54 @@
 
 {% block extra-style %}
 <style>
-    .img-container{
-        margin-top:20px;
-        margin-bottom: 30px;
-    }
-    .start-button{
-        width: 200px;
-        height: 100px;
-        margin-top: 70px;
-        background-color: #FFB2B2;
-        border-radius: 0.5em;
-        border:none;
-        font-size: 50px;
-        color:white;
+    .background {
+        margin-top: 0;
+        margin-bottom: 0 auto;
+        background-image: url("{% static 'img/home_bg.png' %}");
+        background-size: cover;
+        background-position: center;
+        width:53em;
+        height:53em;
+        position: relative; /* background를 relative로 지정 */
     }
 
-    .divde-hr{
-        margin:0 auto;
-        width:80%;
+    #start-button {
+        border-radius: 0.8em;
+        border: none;
+        padding:0.7em;
+
+        font-size: 1.1em;
+        background-color: rgb(190, 255, 93);
+        color: rgb(6, 6, 121);
+        font-weight: bolder;
+
+        bottom: 10%; 
+        left: 50%; 
+        transform: translateX(-50%); /* left를 50%로 지정했기 때문에 가운데 정렬을 위해 transform 사용 */
+
+        position: absolute; /* button을 absolute로 지정 */
     }
+
 </style>
 {% endblock %}
 
 
 {% block content %}
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-sm-7 d-flex justify-content-center">
-            <div class="img-container">
-                <img src="{% static 'img/logo.png' %}" width="500">
-            </div>
-        </div>
-        <div class="col"></div>
-    </div>
-    <hr class="divde-hr">
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-sm-6 d-flex justify-content-center">
-            <button class="start-button"> Start </button>
-        </div>
-        <div class="col"></div>
-    </div>
-
+<div class="background">
+    <button id="start-button">
+        텔멧과 시작하기
+        <!-- <img src="{% static 'img/home_strt.png' %}"> -->
+    </button>
+</div>
 {% endblock %}
 
 {% block extra-script %}
-{% endblock %}
+<script>
+startEventListner = function() {
+    window.location.href = "/chatroom";
+}
 
+document.getElementById("start-button").addEventListener("click", startEventListner);
+</script>
+{% endblock %}
 
