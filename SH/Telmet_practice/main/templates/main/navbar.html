@@ -1,0 +1,21 @@
+{% load static %}
+
+<nav class="navbar">
+    <ul class="navbar_menu">
+        <li class="nav_item {% if request.path == '/' %}active{% endif %}">
+            <!-- <div class="nav_link" onclick="location.href='/'">Home</div> -->
+            <a class="nav_link" href="/">Home</a>
+        </li>
+
+        <li class="nav_item {% if request.path == '/chatroom' %}active{% endif %}">
+            <a class="nav_link" href="/chatroom">ChatRoom</a>
+        </li>
+        <li class="nav_item {% if request.path == '/result' %}active{% endif %}">
+            <a class="nav_link" href="/result">Result</a>
+        </li>
+    </ul>
+
+    <ul class="navbar_icons">
+        <!-- <li><img src="{% static 'img/logo.png' %}" width="110"></li> -->
+    </ul>
+</nav>

@@ -1,0 +1,100 @@
+/* Card Box CSS */
+
+.cards-row{
+    height:30%;
+}
+
+.card-outer-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+}
+
+.card-inner-box{
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    width:80%;
+    height:100%;
+}
+
+/* Origin Card CSS */
+
+.origin-card{
+    width:30%;
+    height:70%;
+    border-top:0.3em solid #FFB2B2;
+    background-color: white;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#count-card{
+    border-top:0.3em solid #FFB2B2;
+}
+
+.origin-card-header{
+    margin-top:0.5em;
+    display:flex;
+    justify-content: space-evenly;
+    height:30%;
+}
+
+.origin-card-title{
+    display:flex;
+    align-items: start;
+    font-size: 1.4em;
+    font-weight: bold;
+    width:75%;
+    margin-left:0.5em;
+}
+
+.origin-card-logo{
+    width:20%;
+    font-size:1.8em;
+}
+
+.origin-card-body{
+    color:grey;
+    height:65%;
+    font-size:2.3em;
+    font-weight:bolder;
+}
+
+.origin-card-content{
+    margin-left:0.5em;
+    margin-bottom:0.1em;
+    height: 62%;
+    width: 100%;
+}
+
+.origin-card-detail{
+    font-size:0.3em;
+    font-weight: lighter;
+    height:30%;
+    margin-left:1.9em;
+}
+
+
+/* Table Box CSS */
+
+.table-row{
+    height:70%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-outer-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-inner-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+

@@ -1,0 +1,82 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block extra-style %}
+<link rel="stylesheet" href="static/css/result.css">
+<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+
+{% block content %}
+<div class="cards-row">
+    <div class="card-outer-box">
+        <div class="card-inner-box">
+            <div class="origin-card">
+                <div class="origin-card-header">
+                    <div class="origin-card-title">
+                        Record Time
+                    </div>
+                    <div class="origin-card-logo">
+                        <i class="fa-solid fa-microphone" style="color: #f6747a;"></i>
+                    </div>
+                </div>
+                <div class="origin-card-body">
+                    <div class="origin-card-content">
+                        {{record_time}} sec
+                    </div>
+                </div>
+
+            </div>
+            <div class="origin-card" id="count-card">
+                <div class="origin-card-header">
+                    <div class="origin-card-title">
+                        Total Count
+                    </div>
+                    <div class="origin-card-logo">
+                        <i class="fa-solid fa-list-check" style="color: #f6747a;"></i>
+                    </div>
+                </div>
+                <div class="origin-card-body">
+                    <div class="origin-card-content">
+                        {{total_count}} ea
+                    </div>
+                    <div class="origin-card-detail">
+                        <span id="normal">= normal({{normal_count}}) </span>+
+                        <span id="abuse">abuse({{abuse_count}}) </span>+
+                        <span id="sexual">sexual({{sexual_count}})</span>
+                    </div>
+                </div>
+            </div>
+            <div class="origin-card">
+                <div class="origin-card-header">
+                    <div class="origin-card-title">
+                        미정
+                    </div>
+                    <div class="origin-card-logo">
+                        
+                    </div>
+                </div>
+                <div class="origin-card-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="table-row">
+    <div class="table-outer-box">
+        <div class="table-inner-box">
+            {% render_table table %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra-script %}
+{% endblock %}
+
+

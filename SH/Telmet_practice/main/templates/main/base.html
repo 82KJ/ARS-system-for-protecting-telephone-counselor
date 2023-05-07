@@ -1,0 +1,46 @@
+{% load django_bootstrap5 %}
+{% load static %}
+
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>Attention</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    <link rel="stylesheet" href="static/css/navbar.css">
+    <link rel="stylesheet" href="static/css/card.css">
+    {% block extra-style %}{% endblock %}
+</head>
+
+<body>
+    {% bootstrap_messages %}
+    <div class="container" style="margin-top:5%">
+
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-sm-9">
+                <div class="card"{% if request.resolver_match.url_name == 'home' %} style="height:1080px; width:1080px;"{% else %} style="height:43rem;"{% endif %}>
+                    <div class="card-header">
+                        <!--home 화면에서 상단 바 해제 if문 추가-->
+                        {% if request.resolver_match.url_name != 'home'%}
+                            {% include 'main/navbar.html' %}
+                        {% endif %}                      
+                    </div>
+                    <div class="card-body">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
+
+        </div>
+
+    </div>
+
+    {% block extra-script %}{% endblock %}
+
+</body>
+
+</html>

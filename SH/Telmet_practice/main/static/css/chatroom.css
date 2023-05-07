@@ -1,0 +1,163 @@
+#cur_time{
+    width:90%;
+    margin-left:auto;
+    padding-bottom:0.5em;
+
+    color:grey;
+    font-weight: bolder;    
+}
+
+/* 채팅룸 CSS */
+
+#chat_messages{
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    height:70%;
+    width:80%;
+    margin:auto;
+}
+
+#chat_messages::-webkit-scrollbar{
+    width:0.7em;
+}
+
+#chat_messages::-webkit-scrollbar-track {
+    background-color: #FFB2B2;
+    border-radius: 1em;    
+}
+
+#chat_messages::-webkit-scrollbar-thumb{
+    background-color: #ff8787;
+    border-radius: 1em;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+
+.divde-line{
+    border: 0.1em dashed grey;
+    width:80%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:0;
+}
+
+
+/* 채팅 메세지 CSS */
+
+.chat-message{
+    display : flex;
+}
+
+.chat-message div{
+    background-color : #f2f2f2;
+    font-size:1.2em;
+    font-weight: 800;
+    border-radius : 0.5em;
+    padding : 0.6em;
+    margin : 0.4em 0;
+    display : inline-block;
+    max-width : 80%;
+    word-wrap : break-word;
+}
+
+.chat-message > .abuse-sentence {
+    background-color : rgb(255, 113, 113);
+    color:white;
+}
+
+.chat-message > .sexual-sentence {
+    background-color : rgb(122, 122, 255);
+    color:white;
+
+}
+
+.chat-time {
+    display: flex;
+    font-size: 1em;
+    align-items: end;
+    padding-bottom:0.5em;
+    padding-left:0.5em;
+    color: grey;
+    font-weight :500;
+
+}
+
+/* 중지 메세지 CSS */
+.stop-message{
+    width:80%;
+    margin-top:0.5em;
+    margin-left:auto;
+    margin-right:auto;
+    font-weight:bold;
+    font-size:1.1em;
+    display:flex;
+    justify-content: center;
+}
+
+#default-message{
+    color :black;
+    display:flex;
+    justify-content: center;
+    font-weight:500;
+}
+
+#abuse-cnt-message{
+    color:rgb(255, 113, 113);
+}
+
+#sexual-cnt-message{
+    color:rgb(122, 122, 255);
+}
+
+/* 녹음 버튼 CSS */
+
+.button-box{
+    display:flex;
+    justify-content: center;
+    padding-top:1em;
+}
+
+#recordButton {
+    position: relative;
+    display: inline-block;
+    width: 4em;
+    height: 4em;
+    border: none;
+    background-color: #FFB2B2;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+#recordButton .outer-circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background-color: #FFB2B2;
+}
+
+#recordButton.recording .outer-circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background-color: black;
+}
+
+.inner-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 50%;
+    background-color: white;
+    border-radius: 50%;
+}
