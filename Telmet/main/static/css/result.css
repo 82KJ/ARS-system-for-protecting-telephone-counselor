@@ -43,7 +43,7 @@
 .origin-card-title{
     display:flex;
     align-items: start;
-    font-size: 1.4em;
+    font-size: 1.3em;
     font-weight: bold;
     width:75%;
     margin-left:0.5em;
@@ -62,20 +62,34 @@
 }
 
 .origin-card-content{
+    display:flex;
+    align-items: center;
+
     margin-left:0.5em;
-    margin-bottom:0.1em;
-    height: 62%;
+    height: 65%;
     width: 100%;
     font-size:1em;
 }
 
 .origin-card-detail{
+    color:#03020273;
     font-size:0.3em;
     font-weight: lighter;
     height:30%;
     margin-left:1.9em;
 }
 
+#state-content{
+    /* margin-top:0.2em; */
+    font-size:0.8em;
+}
+/* #record-content{
+    margin-top:0.2em;
+} */
+
+#content-logo{
+    margin-top:0.4em;
+}
 
 /* Table Box CSS */
 

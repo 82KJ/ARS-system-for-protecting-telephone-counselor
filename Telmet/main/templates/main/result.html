@@ -15,18 +15,22 @@
             <div class="origin-card">
                 <div class="origin-card-header">
                     <div class="origin-card-title">
-                        Record Time
+                        Telmet State
                     </div>
                     <div class="origin-card-logo">
-                        <i class="fa-solid fa-microphone" style="color: #f6747a;"></i>
+                        <i class="fa-solid fa-headset" style="color: #f6747a;"></i> 
                     </div>
                 </div>
                 <div class="origin-card-body">
-                    <div class="origin-card-content">
-                        {{record_time}} sec
+                    <div class="origin-card-content" id="state-content">
+                        Normal&nbsp;<i class="fa-regular fa-thumbs-up fa-xs" id="content-logo" style="color:#4b57fc"></i> 
+                        <!-- Shutdown&nbsp;<i class="fa-solid fa-bolt fa-xs" id="content-logo" style="color: #f6dc35;"></i> -->
                     </div>
-                </div>
+                    <div class="origin-card-detail">
+                        <span>= whether shutdown has occurred</span>
+                    </div>
 
+                </div>
             </div>
             <div class="origin-card" id="count-card">
                 <div class="origin-card-header">
@@ -51,13 +55,19 @@
             <div class="origin-card">
                 <div class="origin-card-header">
                     <div class="origin-card-title">
-                        미정
+                        Record Time
                     </div>
                     <div class="origin-card-logo">
-                        
+                        <i class="fa-solid fa-microphone" style="color: #f6747a;"></i>
                     </div>
                 </div>
                 <div class="origin-card-body">
+                    <div class="origin-card-content" id="record-content">
+                        {{record_time}} sec
+                    </div>
+                    <div class="origin-card-detail">
+                        <span>= immediately after button press </span>
+                    </div>
                 </div>
             </div>
         </div>
