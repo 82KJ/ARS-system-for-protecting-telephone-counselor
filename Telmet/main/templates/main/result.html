@@ -81,21 +81,24 @@
     <div class="table-outer-box">
         <div class="table-inner-box">
             <table>
-                <thead>
-                    <tr>
-                        <th>Num</th>
-                        <th>Time</th>
-                        <th>Content</th>
-                        <th>Result</th>
+                <thead class="table-header">
+                    <tr class="table-header-row">
+                        <th class="num-th">Num</th>
+                        <th class="time-th">Time</th>
+                        <th class="content-th">Content</th>
+                        <th class="result-th">Result</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-body">
+                    {% if result_table|length == 0 %}
+                    <td class="none-td">Telmet 실행 후, 결과를 확인하세요</td>
+                    {% endif %}
                     {% for row in result_table %}
                     <tr>
-                        <td>{{row.Num}}</td>
-                        <td>{{row.Time}}</td>
-                        <td>{{row.Content}}</td>
-                        <td>{{row.Result}}</td>
+                        <td class="num-td">{{row.Num}}</td>
+                        <td class="time-td">{{row.Time}}</td>
+                        <td class="content-td" >{{row.Content}}</td>
+                        <td class="result-td" {% if row.Result == "Abuse"%} id="abuse-row" {% elif row.Result == "Sexual" %} id="sexual-row" {% endif %}>{{row.Result}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
