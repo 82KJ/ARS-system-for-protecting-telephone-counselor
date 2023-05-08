@@ -26,17 +26,20 @@ def chatroom(request):
     return render(request, 'main/chatroom.html', res)
 
 def result(request):
-    # model_control에 있는 함수 가져오기
+    # DB Access 객체 만들기
     model_control = ModelControl()
 
-    # 전체 record time 받아오기
+    # 전체 record time
     record_time = model_control.get_total_time()
 
-    # 조건별 대화 문장 수 받아오기
+    # 조건별 대화 문장 수
     total_count = model_control.get_total_conversation_count()
     normal_count = model_control.get_normal_conversation_count()
     abuse_count = model_control.get_abuse_conversation_count()
     sexual_count = model_control.get_sexual_conversation_count()
+
+    # 강제 종료 여부
+    is_shutdown = model_control.is_shutdown()
 
     #장고 테이블
     logs = ConversationLog.objects.all()
@@ -47,6 +50,7 @@ def result(request):
                 'normal_count' : normal_count,
                 'abuse_count' : abuse_count,
                 'sexual_count' : sexual_count,
+                'is_shutdown' : is_shutdown,
                 'abuse_data' : model_control.load_abuse_data(),
                 'sexual_data' : model_control.load_sexual_data(),
                 'table' : table, #장고 테이블

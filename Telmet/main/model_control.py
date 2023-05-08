@@ -43,20 +43,6 @@ class ModelControl:
     def id_in_conversation(self,id):
         return ConversationLog.objects.filter(log_id=id).exists()
 
-    # Dictionary CRUD
-    @database_sync_to_async
-    def morph_in_abusedict(self, morph):
-        return AbuseDictionary.objects.filter(morpheme=morph).exists()
-    
-    @database_sync_to_async
-    def morph_in_sexualdict(self, morph):
-        return SexualDictionary.objects.filter(morpheme=morph).exists()
-    
-    @database_sync_to_async
-    def morph_in_counselordict(self, morph):
-        return CounselorDictionary.objects.filter(morpheme=morph).exists()
-    
-    # result DB
     def load_abuse_data(self):
         abuse_data = []
         conversation_log = ConversationLog.objects.all()
@@ -74,16 +60,16 @@ class ModelControl:
         return sexual_data
 
     def get_normal_conversation_count(self):
-        return ConversationLog.objects.filter(result=0).count
+        return ConversationLog.objects.filter(result=0).count()
 
     def get_abuse_conversation_count(self):
-        return ConversationLog.objects.filter(result=1).count
+        return ConversationLog.objects.filter(result=1).count()
     
     def get_sexual_conversation_count(self):
-        return ConversationLog.objects.filter(result=2).count
+        return ConversationLog.objects.filter(result=2).count()
     
     def get_total_conversation_count(self):
-        return ConversationLog.objects.all().count
+        return ConversationLog.objects.all().count()
     
     def get_total_time(self):
         first_record_time = RecordStartTime.objects.first()
@@ -94,4 +80,28 @@ class ModelControl:
         else:
             delta_time = last_conversation.time - first_record_time.time
             return delta_time.seconds
+    
+    def is_shutdown(self):
+        abuse_count = self.get_abuse_conversation_count()
+        sexual_count = self.get_sexual_conversation_count()
+
+        if sexual_count >= 2 or (abuse_count + sexual_count) >=3:
+            return True
+        else:
+            return False
+
+    # Dictionary CRUD
+    @database_sync_to_async
+    def morph_in_abusedict(self, morph):
+        return AbuseDictionary.objects.filter(morpheme=morph).exists()
+    
+    @database_sync_to_async
+    def morph_in_sexualdict(self, morph):
+        return SexualDictionary.objects.filter(morpheme=morph).exists()
+    
+    @database_sync_to_async
+    def morph_in_counselordict(self, morph):
+        return CounselorDictionary.objects.filter(morpheme=morph).exists()
+    
+
     

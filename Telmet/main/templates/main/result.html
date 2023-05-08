@@ -23,8 +23,11 @@
                 </div>
                 <div class="origin-card-body">
                     <div class="origin-card-content" id="state-content">
-                        Normal&nbsp;<i class="fa-regular fa-thumbs-up fa-xs" id="content-logo" style="color:#4b57fc"></i> 
-                        <!-- Shutdown&nbsp;<i class="fa-solid fa-bolt fa-xs" id="content-logo" style="color: #f6dc35;"></i> -->
+                        {% if is_shutdown == False %}
+                            Normal&nbsp;<i class="fa-regular fa-thumbs-up fa-xs" id="content-logo" style="color:#4b57fc"></i> 
+                        {% else %}
+                            Shutdown&nbsp;<i class="fa-solid fa-bolt fa-xs" id="content-logo" style="color: #f6dc35;"></i>
+                        {% endif %}
                     </div>
                     <div class="origin-card-detail">
                         <span>= whether shutdown has occurred</span>
