@@ -43,22 +43,9 @@ class ModelControl:
     def id_in_conversation(self,id):
         return ConversationLog.objects.filter(log_id=id).exists()
 
-    def load_abuse_data(self):
-        abuse_data = []
-        conversation_log = ConversationLog.objects.all()
-        for log in conversation_log:
-            if log.result==1 :
-                abuse_data.append({'content': log.content, 'time' : log.time, 'result' : log.result})
-        return abuse_data
+    def select_all_conversation(self):
+        return ConversationLog.objects.all()
     
-    def load_sexual_data(self):
-        sexual_data = []
-        conversation_log = ConversationLog.objects.all()
-        for log in conversation_log:
-            if log.result==2 :
-                sexual_data.append({'content': log.content, 'time' : log.time, 'result' : log.result})
-        return sexual_data
-
     def get_normal_conversation_count(self):
         return ConversationLog.objects.filter(result=0).count()
 

@@ -2,9 +2,8 @@ from django.shortcuts import render
 from main.models import ConversationLog
 from datetime import datetime
 
-# result DB
 from main.model_control import ModelControl
-from .result_table import ResultTable
+from .make_table import ResultTable
 
 def home(request):
     return render(request, 'main/home.html')
@@ -41,9 +40,9 @@ def result(request):
     # 강제 종료 여부
     is_shutdown = model_control.is_shutdown()
 
-    #장고 테이블
-    logs = ConversationLog.objects.all()
-    table = ResultTable(logs)
+    # 결과 테이블
+    result_table = ResultTable().get_table()
+
     context = {
                 'record_time' : str(record_time),
                 'total_count' : total_count,
@@ -51,9 +50,7 @@ def result(request):
                 'abuse_count' : abuse_count,
                 'sexual_count' : sexual_count,
                 'is_shutdown' : is_shutdown,
-                'abuse_data' : model_control.load_abuse_data(),
-                'sexual_data' : model_control.load_sexual_data(),
-                'table' : table, #장고 테이블
+                'result_table' : result_table
                 }
     return render(request, 'main/result.html', context)
 

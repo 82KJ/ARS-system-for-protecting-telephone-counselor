@@ -1,6 +1,5 @@
 {% extends "main/base.html" %}
 {% load static %}
-{% load render_table from django_tables2 %}
 
 {% block extra-style %}
 <link rel="stylesheet" href="static/css/result.css">
@@ -81,7 +80,26 @@
 <div class="table-row">
     <div class="table-outer-box">
         <div class="table-inner-box">
-            {% render_table table %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Num</th>
+                        <th>Time</th>
+                        <th>Content</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result_table %}
+                    <tr>
+                        <td>{{row.Num}}</td>
+                        <td>{{row.Time}}</td>
+                        <td>{{row.Content}}</td>
+                        <td>{{row.Result}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
