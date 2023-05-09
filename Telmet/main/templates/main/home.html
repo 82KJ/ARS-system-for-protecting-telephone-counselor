@@ -2,36 +2,7 @@
 {% load static %}
 
 {% block extra-style %}
-<style>
-    .background {
-        margin-top: 0;
-        margin-bottom: 0 auto;
-        background-image: url("{% static 'img/home_bg.png' %}");
-        background-size: cover;
-        background-position: center;
-        width:53em;
-        height:53em;
-        position: relative; /* background를 relative로 지정 */
-    }
-
-    #start-button {
-        border-radius: 0.8em;
-        border: none;
-        padding:0.7em;
-
-        font-size: 1.1em;
-        background-color: rgb(190, 255, 93);
-        color: rgb(6, 6, 121);
-        font-weight: bolder;
-
-        bottom: 10%; 
-        left: 50%; 
-        transform: translateX(-50%); /* left를 50%로 지정했기 때문에 가운데 정렬을 위해 transform 사용 */
-
-        position: absolute; /* button을 absolute로 지정 */
-    }
-
-</style>
+<link rel="stylesheet" href="static/css/home.css">
 {% endblock %}
 
 
@@ -39,18 +10,11 @@
 <div class="background">
     <button id="start-button">
         텔멧과 시작하기
-        <!-- <img src="{% static 'img/home_strt.png' %}"> -->
     </button>
 </div>
 {% endblock %}
 
 {% block extra-script %}
-<script>
-startEventListner = function() {
-    window.location.href = "/chatroom";
-}
-
-document.getElementById("start-button").addEventListener("click", startEventListner);
-</script>
+<script type="text/javascript" src="/static/js/home.js"></script>
 {% endblock %}
 

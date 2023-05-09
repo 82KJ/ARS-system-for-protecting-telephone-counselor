@@ -1,0 +1,27 @@
+.background {
+    margin-top: 0;
+    margin-bottom: 0 auto;
+    background-image: url("/static/img/home_bg.png");
+    background-size: cover;
+    background-position: center;
+    width:53em;
+    height:53em;
+    position: relative; 
+}
+
+#start-button {
+    border-radius: 0.8em;
+    border: none;
+    padding:0.7em;
+
+    font-size: 1.1em;
+    background-color: rgb(190, 255, 93);
+    color: rgb(6, 6, 121);
+    font-weight: bolder;
+
+    bottom: 10%; 
+    left: 50%; 
+    transform: translateX(-50%); 
+
+    position: absolute; 
+}
