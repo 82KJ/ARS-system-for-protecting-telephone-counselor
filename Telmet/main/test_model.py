@@ -76,7 +76,6 @@ class KoBERT:
         self.model = BERTClassifier(self.bertmodel, dr_rate=0.5).to(self.device)
         self.base_url = Path(__file__).resolve().parent
         self.model_url = os.path.join(self.base_url, 'kobert_classifier.pth')
-        #print(self.model_url)
         self.model_state_dict = torch.load(self.model_url, map_location=self.device)
         self.model.load_state_dict(self.model_state_dict)
         print("모델 init 완료")
@@ -110,15 +109,3 @@ class KoBERT:
             result = np.argmax(logits)
             return result
             
-            # # 값이 가장 큰 인덱스를 출력
-            # if np.argmax(logits) == 0:
-            #     test_eval= "일반"
-            # elif np.argmax(logits) == 1:
-            #     test_eval = "폭언"
-            # elif np.argmax(logits) == 2:
-            #     test_eval = "성희롱"
-            
-            # return test_eval
-
-
-            #print(">> " + test_eval + " 문장입니다.")

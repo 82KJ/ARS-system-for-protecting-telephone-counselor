@@ -18,7 +18,7 @@ class ModelControl:
     def select_start_time(self):
         RecordStartTime.objects.first()
 
-    # ConversationLog CRUD
+    # ConversationLog CRUD - In AsyncChannels
     @database_sync_to_async
     def insert_content(self, text):
         ConversationLog.objects.create(content=text)
@@ -42,7 +42,8 @@ class ModelControl:
     @database_sync_to_async
     def id_in_conversation(self,id):
         return ConversationLog.objects.filter(log_id=id).exists()
-
+    
+    # ConversationLog CRUD - In views
     def select_all_conversation(self):
         return ConversationLog.objects.all()
     

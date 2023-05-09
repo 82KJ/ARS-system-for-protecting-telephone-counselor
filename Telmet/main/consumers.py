@@ -8,11 +8,13 @@ import numpy as np
 import librosa
 import time
 
+# Vito API Load
 from .vito_streaming_api import VitoStreamingAPI
 
 # DB table Load
 from .model_control import ModelControl
 
+# 형태소 분리기 + KoBERT 모델 로드
 kiwi = Kiwi()
 model = test_model.KoBERT()
 print("Kiwi and KoBERT Model SetUp")
@@ -232,12 +234,9 @@ class AudioConsumer(AsyncWebsocketConsumer):
             if np.isnan(new_data[i]) == False:
                 new_buffer[i] = new_data[i]
         y = librosa.to_mono(new_buffer)
-        #print(len(y))
         self.amplitude_list = np.append(self.amplitude_list, y)
         self.cnt_list.append(len(y)) 
-        #f0, voiced_flag, voiced_probs = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
 
-        #print(f0)
     
     async def analyzer(self, start, end):
         edited_data = self.amplitude_list[start:end]
@@ -258,12 +257,4 @@ class AudioConsumer(AsyncWebsocketConsumer):
         start = int(start /1000)
         end = int(end / 1000)
         return start,end
-        #return self.amplitude_list[start:end]
-        
-    
 
-# mel = 1127.01048 x ln(1 + hz/ 700)
-# 19000, 48400, 49400 ... 매번 48000 안떨어진다
-# dp = [19000, 19000+48400 , 합산 식을]
-# 슬라이스를 해서 인덱스에 알맞은 값만 짤라오게 만들면 된다
-# 끝점과 끝점의 피치기울기.. 끝점 제대로 못 잡는다 --> Hz, mel 뭉뜽그려지면서, 얼추 파악

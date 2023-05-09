@@ -25,10 +25,4 @@ application = ProtocolTypeRouter({
             websocket_urlpatterns
         )
     ),
-
-
-}
-
-
-
-)
+})

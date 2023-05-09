@@ -34,11 +34,13 @@ class CounselorDictionary(models.Model):
         verbose_name = 'Counselor Dictionary'
         verbose_name_plural = 'Counselor Dictionary' 
 
+
+# 대화 내용 저장 Class
 class ConversationLog(models.Model):
     log_id = models.AutoField(primary_key=True)
     content = models.TextField(blank=True, null=True)
     time = models.DateTimeField(auto_now_add=True)
-    result = models.IntegerField(blank=True, null=True, default=0) #공백허용
+    result = models.IntegerField(blank=True, null=True, default=0)
 
     def __str__(self):
         return self.content

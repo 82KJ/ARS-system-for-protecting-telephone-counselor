@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "django_bootstrap5",
-    "django_tables2", #장고 테이블
     "fontawesomefree"
 ]
 
