@@ -117,7 +117,8 @@ class AudioConsumer(AsyncWebsocketConsumer):
                     start, end = self.split_wav(msg["start_at"], msg["start_at"]+msg["duration"])
                     start_pitch, end_pitch = await self.analyzer(start,end)
                     print((start_pitch - end_pitch) / (msg["duration"] / 1000))
-  
+
+                    # 평균 피치 변화율 기준은 오차범위 고려 절대값 60 적용
                     if (start_pitch - end_pitch) / (msg["duration"] / 1000) < -60 or (start_pitch - end_pitch) / (msg["duration"] / 1000) > 60:
                         cur_text_bert_flag = True
 
@@ -126,7 +127,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
                 
                 end_voice_timer = time.time()
 
-
+                # 사전 매칭 log check
                 print(abuse_dict_flag, sexual_dict_flag, cur_text_bert_flag, counselor_dict_flag)
 
                 # 4. KoBert 분류기 투입
