@@ -118,8 +118,7 @@ class AudioConsumer(AsyncWebsocketConsumer):
                     start_pitch, end_pitch = await self.analyzer(start,end)
                     print((start_pitch - end_pitch) / (msg["duration"] / 1000))
   
-                    # 해당 부분은 추후 교체 예정
-                    if (start_pitch - end_pitch) / (msg["duration"] / 1000) < -70:
+                    if (start_pitch - end_pitch) / (msg["duration"] / 1000) < -60 or (start_pitch - end_pitch) / (msg["duration"] / 1000) > 60:
                         cur_text_bert_flag = True
 
                 if counselor_dict_flag:
