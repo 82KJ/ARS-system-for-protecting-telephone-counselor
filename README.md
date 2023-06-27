@@ -105,6 +105,22 @@ Training Data Set을 기준으로 각 문장별 핵심 언어폭력 형태소 �
 + **L3** : **녹음 시간** - 전체 발화 녹음 시간 &nbsp;&nbsp;&nbsp;  
 + **L4** : **전체 요약 표** - 전체 발화의 탐지 결과를 표로 요약하여 제시 &nbsp;&nbsp;&nbsp;  
 
+### 3. ChatRoom Page - Other Situation
+![image](https://github.com/82KJ/ARS-system-for-protecting-telephone-counselor/assets/45115733/82d469af-4270-45c1-a9ab-a24a1697f163)
++ **L1** : **문맥 의미 파악을 통한 폭언 탐지** - 특정 폭언 키워드 없이도 전체 문맥으로 폭언 탐지 상황 &nbsp;&nbsp;&nbsp;  
++ **L2** : **상담원 발화 사전 매칭** - 상담원 발화 사전 매칭 후 2차 검증 상황&nbsp;&nbsp;&nbsp;  
 
+<br>
 
+## User Manaul
+- 시연 영상 : https://youtu.be/JJABFTkqWOA
+- 설치 매뉴얼 : https://youtu.be/e6OmU-yuZIQ
+- 본 시스템은 실시간 STT를 위해 [VITO Speech](https://developers.vito.ai/?utm_source=vito_homepage&utm_medium=%EB%AC%B4%EB%A3%8C_click&utm_campaign=family_site_%EC%83%81%EB%8B%A8_api) API를 활용합니다.
+  사이트에 방문해서 필요한 제원을 받아주세요
+- 현재 모델 다운로드 링크는 비공개로 전환하였습니다. 필요하신 분들은 아래의 이메일을 통해 연락 주세요
 
+<br>
+
+## Contacts
+프로젝트 관련 문의는 다음의 이메일을 이용해 주시기 바랍니다.  
+E-mail : remf123@gmail.com
